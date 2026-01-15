@@ -5,4 +5,5 @@ export interface Task {
   duration: number;
   color: string;
   completed: boolean;
+  completedAt?: string;
 }

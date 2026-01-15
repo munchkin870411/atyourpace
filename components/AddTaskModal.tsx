@@ -15,6 +15,7 @@ interface AddTaskModalProps {
   onClose: () => void;
   onAddTask: (task: Omit<Task, 'id' | 'completed'>) => void;
   existingTasks: Task[];
+  isFirstTask: boolean;
 }
 
 export default function AddTaskModal({
@@ -22,6 +23,7 @@ export default function AddTaskModal({
   onClose,
   onAddTask,
   existingTasks,
+  isFirstTask,
 }: AddTaskModalProps) {
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [infoVisible, setInfoVisible] = useState(false);
@@ -46,7 +48,7 @@ export default function AddTaskModal({
 
   const uniqueTaskTemplates = Array.from(new Set(existingTasks.map((t) => t.text)))
     .map((text) => existingTasks.find((t) => t.text === text)!)
-    .filter((t) => t !== undefined);
+    .filter((t) => t !== undefined && t.text !== 'Add your first task!');
 
   const selectExistingTask = (task: Task) => {
     setTaskText(task.text);
@@ -171,30 +173,34 @@ export default function AddTaskModal({
               <Text style={styles.saveButtonText}>Save Task</Text>
             </TouchableOpacity>
 
-            <Text style={styles.inputLabel}>Pick a starting time?</Text>
-            <View style={styles.startTimeContainer}>
-              <TextInput
-                style={[styles.input, styles.inputSmall]}
-                placeholder=":"
-                value={startTime}
-                onChangeText={setStartTime}
-              />
-              <TouchableOpacity onPress={() => setInfoVisible(!infoVisible)}>
-                <Text style={styles.infoIcon}>ℹ️</Text>
-              </TouchableOpacity>
-            </View>
+            {isFirstTask && (
+              <>
+                <Text style={styles.inputLabel}>Pick a starting time?</Text>
+                <View style={styles.startTimeContainer}>
+                  <TextInput
+                    style={[styles.input, styles.inputSmall]}
+                    placeholder="09.00"
+                    value={startTime}
+                    onChangeText={setStartTime}
+                  />
+                  <TouchableOpacity onPress={() => setInfoVisible(!infoVisible)}>
+                    <Text style={styles.infoIcon}>ℹ️</Text>
+                  </TouchableOpacity>
+                </View>
 
-            {infoVisible && (
-              <View style={styles.infoBox}>
-                <Text style={styles.infoText}>
-                  Syns endast på första uppgiften för dagen, för att ha en start tid
-                  på schemat.
-                </Text>
-                <Text style={styles.infoText}>
-                  Do you want to start right away or do you want to wait? It is
-                  completely up to you!
-                </Text>
-              </View>
+                {infoVisible && (
+                  <View style={styles.infoBox}>
+                    <Text style={styles.infoText}>
+                      Syns endast på första uppgiften för dagen, för att ha en start tid
+                      på schemat.
+                    </Text>
+                    <Text style={styles.infoText}>
+                      Do you want to start right away or do you want to wait? It is
+                      completely up to you!
+                    </Text>
+                  </View>
+                )}
+              </>
             )}
 
             <View style={styles.modalButtons}>

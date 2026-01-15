@@ -7,7 +7,8 @@ export const taskItemStyles = StyleSheet.create({
     paddingVertical: 12,
     borderBottomWidth: 1,
     borderBottomColor: '#e0e0e0',
-  },  taskContent: {
+  },  
+  taskContent: {
     flexDirection: 'row',
     alignItems: 'center',
     flex: 1,
