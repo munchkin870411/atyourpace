@@ -6,4 +6,5 @@ export interface Task {
   color: string;
   completed: boolean;
   completedAt?: string;
+  section: 'today' | 'thisWeek' | 'other';
 }

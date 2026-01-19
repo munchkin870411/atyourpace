@@ -16,6 +16,8 @@ interface AddTaskModalProps {
   onAddTask: (task: Omit<Task, 'id' | 'completed'>) => void;
   existingTasks: Task[];
   isFirstTask: boolean;
+  section: 'today' | 'thisWeek' | 'other';
+  editingTask?: Task | null;
 }
 
 export default function AddTaskModal({
@@ -24,13 +26,28 @@ export default function AddTaskModal({
   onAddTask,
   existingTasks,
   isFirstTask,
+  section,
+  editingTask,
 }: AddTaskModalProps) {
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [infoVisible, setInfoVisible] = useState(false);
-  const [taskText, setTaskText] = useState('');
-  const [duration, setDuration] = useState('');
-  const [color, setColor] = useState('#000000');
+  const [taskText, setTaskText] = useState(editingTask?.text || '');
+  const [duration, setDuration] = useState(editingTask?.duration.toString() || '');
+  const [color, setColor] = useState(editingTask?.color || '#000000');
   const [startTime, setStartTime] = useState('');
+
+  // Update form when editingTask changes
+  React.useEffect(() => {
+    if (editingTask) {
+      setTaskText(editingTask.text);
+      setDuration(editingTask.duration.toString());
+      setColor(editingTask.color);
+    } else {
+      setTaskText('');
+      setDuration('');
+      setColor('#000000');
+    }
+  }, [editingTask]);
 
   const colors = [
     '#FFD700',
@@ -64,6 +81,7 @@ export default function AddTaskModal({
         time: startTime || '09.00',
         duration: parseInt(duration),
         color: color,
+        section: section,
       });
       // Reset form
       setTaskText('');
@@ -95,7 +113,7 @@ export default function AddTaskModal({
       <View style={styles.modalOverlay}>
         <View style={styles.modalContent}>
           <ScrollView showsVerticalScrollIndicator={false}>
-            <Text style={styles.modalTitle}>Add a task</Text>
+            <Text style={styles.modalTitle}>{editingTask ? 'Edit task' : 'Add a task'}</Text>
 
             <Text style={styles.inputLabel}>What do you need to do? *</Text>
             <TextInput
