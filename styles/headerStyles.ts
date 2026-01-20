@@ -9,6 +9,7 @@ export const headerStyles = StyleSheet.create({
     paddingRight: 20,
     borderBottomWidth: 1,
     borderBottomColor: '#e0e0e0',
+    backgroundColor: '#cafcd4',
   },
   headerLeft: {
     flexDirection: 'row',

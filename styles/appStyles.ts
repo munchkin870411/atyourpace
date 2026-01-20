@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 export const appStyles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#fafffb',
   },
   content: {
     flex: 1,
@@ -36,7 +36,7 @@ export const appStyles = StyleSheet.create({
     color: '#fff',
   },
   taskContainer: {
-    backgroundColor: '#f9f9f9',
+    backgroundColor: '#f0fff3',
     borderRadius: 12,
     padding: 15,
     borderWidth: 1,
@@ -59,7 +59,7 @@ export const appStyles = StyleSheet.create({
     color: '#4CAF50',
   },
   progressContainer: {
-    backgroundColor: '#f9f9f9',
+    backgroundColor: '#f0fff3',
     borderRadius: 12,
     padding: 15,
     borderWidth: 1,
@@ -119,7 +119,7 @@ export const appStyles = StyleSheet.create({
     bottom: 40,
     left: 0,
     right: 0,
-    backgroundColor: '#fff',
+    backgroundColor: '#ddfae3',
     paddingVertical: 10,
     alignItems: 'center',
     zIndex: 10,
@@ -142,7 +142,7 @@ export const appStyles = StyleSheet.create({
     bottom: 65,
     left: 0,
     right: 0,
-    backgroundColor: '#fff',
+    backgroundColor: '#ddfae3',
     borderTopWidth: 1,
     borderTopColor: '#e0e0e0',
     maxHeight: '60%',
