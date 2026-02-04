@@ -18,6 +18,7 @@ export default function App(): React.JSX.Element {
   const [isExpanded, setIsExpanded] = useState(false);
   const [currentSection, setCurrentSection] = useState<'today' | 'thisWeek' | 'other'>('today');
   const [editingTask, setEditingTask] = useState<Task | null>(null);
+  const [dayStartTime, setDayStartTime] = useState<string>('');
   
   const translateY = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(500)).current;
@@ -81,7 +82,7 @@ export default function App(): React.JSX.Element {
   };
 
   const deleteTask = (id: number) => {
-    const updatedTasks = tasks.filter(task => task.id !== id);
+    const updatedTasks = taskHelpers.deleteTask(tasks, id);
     setTasks(updatedTasks);
     saveTasks(updatedTasks);
   };
@@ -93,9 +94,14 @@ export default function App(): React.JSX.Element {
       saveTasks(updatedTasks);
       setEditingTask(null);
     } else {
-      const updatedTasks = taskHelpers.addTask(tasks, newTaskData, activeTasks);
+      const { updatedTasks, newStartTime } = taskHelpers.addTask(tasks, newTaskData, activeTasks);
       setTasks(updatedTasks);
       saveTasks(updatedTasks);
+      
+      if (newStartTime) {
+        setDayStartTime(newStartTime);
+        AsyncStorage.setItem('dayStartTime', newStartTime);
+      }
     }
     setModalVisible(false);
   };
@@ -112,6 +118,26 @@ export default function App(): React.JSX.Element {
     saveTasks(updatedTasks);
   };
 
+  const moveTaskUp = (taskId: number) => {
+    const { updatedTasks, newStartTime } = taskHelpers.moveTaskUp(tasks, taskId, dayStartTime);
+    setTasks(updatedTasks);
+    saveTasks(updatedTasks);
+    if (newStartTime !== dayStartTime) {
+      setDayStartTime(newStartTime);
+      AsyncStorage.setItem('dayStartTime', newStartTime);
+    }
+  };
+
+  const moveTaskDown = (taskId: number) => {
+    const { updatedTasks, newStartTime } = taskHelpers.moveTaskDown(tasks, taskId, dayStartTime);
+    setTasks(updatedTasks);
+    saveTasks(updatedTasks);
+    if (newStartTime !== dayStartTime) {
+      setDayStartTime(newStartTime);
+      AsyncStorage.setItem('dayStartTime', newStartTime);
+    }
+  };
+
   const activeTasks = tasks.filter(task => !task.completed && task.section === 'today');
   const completedTasks = tasks.filter(task => task.completed);
   const thisWeekTasks = tasks.filter(task => !task.completed && task.section === 'thisWeek');
@@ -126,6 +152,7 @@ export default function App(): React.JSX.Element {
     try {
       const savedTasks = await AsyncStorage.getItem('tasks');
       const lastClearedDate = await AsyncStorage.getItem('lastClearedDate');
+      const savedStartTime = await AsyncStorage.getItem('dayStartTime');
       
       // Kontrollera om det är en ny dag
       const today = new Date().toDateString();
@@ -134,11 +161,35 @@ export default function App(): React.JSX.Element {
       if (savedTasks !== null) {
         let parsedTasks = JSON.parse(savedTasks);
         
+        // MIGRATION: Rensa alla tasks från today om någon har '09.00'
+        const hasBadTime = parsedTasks.some((task: Task) => task.section === 'today' && task.time === '09.00');
+        if (hasBadTime) {
+          console.log('🔧 Migration: Rensar today-tasks med 09.00');
+          parsedTasks = parsedTasks.filter((task: Task) => task.section !== 'today');
+          await AsyncStorage.setItem('tasks', JSON.stringify(parsedTasks));
+          await AsyncStorage.removeItem('dayStartTime');
+          setDayStartTime('');
+          setTasks(parsedTasks);
+          return;
+        }
+        
         // Om det är en ny dag, ta bort alla tasks från "today" sektionen
         if (shouldClearToday) {
           parsedTasks = parsedTasks.filter((task: Task) => task.section !== 'today');
           await AsyncStorage.setItem('tasks', JSON.stringify(parsedTasks));
           await AsyncStorage.setItem('lastClearedDate', today);
+          await AsyncStorage.removeItem('dayStartTime');
+          setDayStartTime('');
+        } else if (savedStartTime) {
+          // Om savedStartTime är '09.00', ignorera det och använd nuvarande tid
+          if (savedStartTime === '09.00') {
+            const now = new Date();
+            const currentTime = `${String(now.getHours()).padStart(2, '0')}.${String(now.getMinutes()).padStart(2, '0')}`;
+            setDayStartTime(currentTime);
+            await AsyncStorage.setItem('dayStartTime', currentTime);
+          } else {
+            setDayStartTime(savedStartTime);
+          }
         }
         
         setTasks(parsedTasks);
@@ -156,8 +207,10 @@ export default function App(): React.JSX.Element {
           section: 'today'
         };
         setTasks([firstTask]);
+        setDayStartTime(currentTime);
         await AsyncStorage.setItem('tasks', JSON.stringify([firstTask]));
         await AsyncStorage.setItem('lastClearedDate', today);
+        await AsyncStorage.setItem('dayStartTime', currentTime);
       }
     } catch (error) {
       console.error('Fel vid laddning av tasks:', error);
@@ -185,6 +238,8 @@ export default function App(): React.JSX.Element {
           onDelete={deleteTask}
           onEdit={handleEditTask}
           onMoveToSection={moveTaskToSectionHandler}
+          onMoveUp={moveTaskUp}
+          onMoveDown={moveTaskDown}
           onAddTask={() => {
             setCurrentSection('today');
             setModalVisible(true);
@@ -211,6 +266,8 @@ export default function App(): React.JSX.Element {
         onDelete={deleteTask}
         onEdit={handleEditTask}
         onMoveToSection={moveTaskToSectionHandler}
+        onMoveUp={moveTaskUp}
+        onMoveDown={moveTaskDown}
         onAddThisWeekTask={() => {
           setCurrentSection('thisWeek');
           setModalVisible(true);

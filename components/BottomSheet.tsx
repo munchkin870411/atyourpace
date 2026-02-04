@@ -15,6 +15,8 @@ interface BottomSheetProps {
   onDelete: (id: number) => void;
   onEdit: (task: Task) => void;
   onMoveToSection: (id: number, section: 'today' | 'thisWeek' | 'other') => void;
+  onMoveUp: (id: number) => void;
+  onMoveDown: (id: number) => void;
   onAddThisWeekTask: () => void;
   onAddOtherTask: () => void;
 }
@@ -30,6 +32,8 @@ export default function BottomSheet({
   onDelete,
   onEdit,
   onMoveToSection,
+  onMoveUp,
+  onMoveDown,
   onAddThisWeekTask,
   onAddOtherTask
 }: BottomSheetProps) {
@@ -71,7 +75,7 @@ export default function BottomSheet({
             {thisWeekTasks.length === 0 ? (
               <Text style={styles.emptyText}>No tasks scheduled for this week</Text>
             ) : (
-              thisWeekTasks.map(task => (
+              thisWeekTasks.map((task, index) => (
                 <TaskItem 
                   key={task.id} 
                   task={task} 
@@ -79,6 +83,10 @@ export default function BottomSheet({
                   onDelete={onDelete} 
                   onEdit={onEdit} 
                   onMoveToSection={onMoveToSection}
+                  onMoveUp={onMoveUp}
+                  onMoveDown={onMoveDown}
+                  isFirst={index === 0}
+                  isLast={index === thisWeekTasks.length - 1}
                   showTime={false} 
                 />
               ))
@@ -102,7 +110,7 @@ export default function BottomSheet({
             {otherTasks.length === 0 ? (
               <Text style={styles.emptyText}>No other tasks yet</Text>
             ) : (
-              otherTasks.map(task => (
+              otherTasks.map((task, index) => (
                 <TaskItem 
                   key={task.id} 
                   task={task} 
@@ -110,6 +118,10 @@ export default function BottomSheet({
                   onDelete={onDelete} 
                   onEdit={onEdit} 
                   onMoveToSection={onMoveToSection}
+                  onMoveUp={onMoveUp}
+                  onMoveDown={onMoveDown}
+                  isFirst={index === 0}
+                  isLast={index === otherTasks.length - 1}
                   showTime={false} 
                 />
               ))

@@ -10,6 +10,8 @@ interface TodaySectionProps {
   onDelete: (id: number) => void;
   onEdit: (task: Task) => void;
   onMoveToSection: (id: number, section: 'today' | 'thisWeek' | 'other') => void;
+  onMoveUp: (id: number) => void;
+  onMoveDown: (id: number) => void;
   onAddTask: () => void;
 }
 
@@ -19,6 +21,8 @@ export default function TodaySection({
   onDelete, 
   onEdit, 
   onMoveToSection,
+  onMoveUp,
+  onMoveDown,
   onAddTask 
 }: TodaySectionProps) {
   return (
@@ -35,7 +39,7 @@ export default function TodaySection({
 
       {/* Task List */}
       <View style={styles.taskContainer}>
-        {activeTasks.map(task => (
+        {activeTasks.map((task, index) => (
           <TaskItem 
             key={task.id} 
             task={task} 
@@ -43,6 +47,10 @@ export default function TodaySection({
             onDelete={onDelete} 
             onEdit={onEdit} 
             onMoveToSection={onMoveToSection}
+            onMoveUp={onMoveUp}
+            onMoveDown={onMoveDown}
+            isFirst={index === 0}
+            isLast={index === activeTasks.length - 1}
             showTime={true} 
           />
         ))}

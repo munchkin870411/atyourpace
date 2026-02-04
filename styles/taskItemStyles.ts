@@ -97,4 +97,26 @@ export const taskItemStyles = StyleSheet.create({
   menuTextActive: {
     color: '#9CA3AF',
   },
+  reorderButtons: {
+    flexDirection: 'column',
+    gap: 1,
+    marginRight: 8,
+  },
+  arrowButton: {
+    width: 24,
+    height: 18,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  arrowButtonDisabled: {
+    opacity: 0.3,
+  },
+  arrowIcon: {
+    fontSize: 14,
+    color: '#5bc47a',
+    fontWeight: 'bold',
+  },
+  arrowIconDisabled: {
+    color: '#d0d0d0',
+  },
 });

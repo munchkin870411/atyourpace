@@ -9,10 +9,14 @@ interface TaskItemProps {
   onDelete: (id: number) => void;
   onEdit: (task: Task) => void;
   onMoveToSection?: (id: number, section: 'today' | 'thisWeek' | 'other') => void;
+  onMoveUp?: (id: number) => void;
+  onMoveDown?: (id: number) => void;
   showTime?: boolean;
+  isFirst?: boolean;
+  isLast?: boolean;
 }
 
-export default function TaskItem({ task, onToggle, onDelete, onEdit, onMoveToSection, showTime = true }: TaskItemProps) {
+export default function TaskItem({ task, onToggle, onDelete, onEdit, onMoveToSection, onMoveUp, onMoveDown, showTime = true, isFirst = false, isLast = false }: TaskItemProps) {
   const [menuVisible, setMenuVisible] = useState(false);
 
   const handleMoveToSection = (section: 'today' | 'thisWeek' | 'other') => {
@@ -24,6 +28,26 @@ export default function TaskItem({ task, onToggle, onDelete, onEdit, onMoveToSec
 
   return (
     <View style={styles.taskItem}>
+      {/* Reorder arrows */}
+      {onMoveUp && onMoveDown && (
+        <View style={styles.reorderButtons}>
+          <TouchableOpacity
+            style={[styles.arrowButton, isFirst && styles.arrowButtonDisabled]}
+            onPress={() => !isFirst && onMoveUp(task.id)}
+            disabled={isFirst}
+          >
+            <Text style={[styles.arrowIcon, isFirst && styles.arrowIconDisabled]}>▲</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.arrowButton, isLast && styles.arrowButtonDisabled]}
+            onPress={() => !isLast && onMoveDown(task.id)}
+            disabled={isLast}
+          >
+            <Text style={[styles.arrowIcon, isLast && styles.arrowIconDisabled]}>▼</Text>
+          </TouchableOpacity>
+        </View>
+      )}
+
       <View style={[styles.colorIndicator, { backgroundColor: task.color }]} />
       
       <TouchableOpacity

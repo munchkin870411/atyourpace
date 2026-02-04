@@ -78,7 +78,7 @@ export default function AddTaskModal({
     if (taskText.trim() && duration.trim()) {
       onAddTask({
         text: taskText,
-        time: startTime || '09.00',
+        time: startTime,
         duration: parseInt(duration),
         color: color,
         section: section,

@@ -82,8 +82,9 @@ export const addTask = (
   tasks: Task[],
   newTaskData: Omit<Task, 'id' | 'completed'>,
   activeTasks: Task[]
-): Task[] => {
+): { updatedTasks: Task[], newStartTime: string | null } => {
   let calculatedTime = newTaskData.time;
+  let newStartTime: string | null = null;
   
   // Hitta tasks i samma sektion
   const sectionTasks = tasks.filter(t => t.section === newTaskData.section && !t.completed);
@@ -96,10 +97,15 @@ export const addTask = (
     const newHours = Math.floor(totalMinutes / 60);
     const newMinutes = totalMinutes % 60;
     calculatedTime = `${String(newHours).padStart(2, '0')}.${String(newMinutes).padStart(2, '0')}`;
-  } else if (!newTaskData.time || newTaskData.time === '09.00') {
+  } else if (!newTaskData.time) {
     // Om det är första tasken och ingen tid angetts, använd nuvarande tid
     const now = new Date();
     calculatedTime = `${String(now.getHours()).padStart(2, '0')}.${String(now.getMinutes()).padStart(2, '0')}`;
+  }
+  
+  // Om det är första tasken i Today, spara starttiden
+  if (newTaskData.section === 'today' && activeTasks.length === 0) {
+    newStartTime = calculatedTime;
   }
   
   const newTask: Task = {
@@ -109,7 +115,14 @@ export const addTask = (
     completed: false,
   };
   
-  return [...tasks, newTask];
+  return { updatedTasks: [...tasks, newTask], newStartTime };
+};
+
+export const deleteTask = (
+  tasks: Task[],
+  id: number
+): Task[] => {
+  return tasks.filter(task => task.id !== id);
 };
 
 export const editTask = (
@@ -156,4 +169,160 @@ export const moveTaskToSection = (
       ? { ...t, section: newSection, time: calculatedTime }
       : t
   );
+};
+
+export const moveTaskUp = (
+  tasks: Task[],
+  taskId: number,
+  dayStartTime: string
+): { updatedTasks: Task[], newStartTime: string } => {
+  const taskIndex = tasks.findIndex(t => t.id === taskId);
+  if (taskIndex === -1) return { updatedTasks: tasks, newStartTime: dayStartTime };
+
+  const task = tasks[taskIndex];
+  const sectionTasks = tasks.filter(t => t.section === task.section && !t.completed);
+  const sectionIndex = sectionTasks.findIndex(t => t.id === taskId);
+  
+  if (sectionIndex <= 0) return { updatedTasks: tasks, newStartTime: dayStartTime };
+
+  // Hitta den task vi ska byta plats med
+  const prevTask = sectionTasks[sectionIndex - 1];
+  const prevTaskIndex = tasks.findIndex(t => t.id === prevTask.id);
+
+  // Byt plats på de två tasks i arrayen
+  let updatedTasks = [...tasks];
+  [updatedTasks[prevTaskIndex], updatedTasks[taskIndex]] = [updatedTasks[taskIndex], updatedTasks[prevTaskIndex]];
+
+  let newStartTime = dayStartTime;
+
+  // Om det är i "today"-sektionen, räkna om alla tider
+  if (task.section === 'today') {
+    const todayTasks = updatedTasks.filter(t => t.section === 'today' && !t.completed);
+    
+    // Bestäm starttid baserat på om schemat är aktivt
+    let startTime = dayStartTime;
+    const now = new Date();
+    const currentTime = `${String(now.getHours()).padStart(2, '0')}.${String(now.getMinutes()).padStart(2, '0')}`;
+    
+    // Behandla '09.00' som ogiltig/default-tid
+    if (!dayStartTime || dayStartTime === '09.00') {
+      // Ingen dayStartTime finns eller det är default-värdet, använd nuvarande klockslag
+      startTime = currentTime;
+      newStartTime = startTime;
+    } else {
+      // Kolla om schemat är aktivt (nuvarande tid >= dayStartTime)
+      const [nowH, nowM] = currentTime.split('.').map(Number);
+      const [startH, startM] = dayStartTime.split('.').map(Number);
+      const nowMinutes = nowH * 60 + nowM;
+      const startMinutes = startH * 60 + startM;
+      
+      if (nowMinutes >= startMinutes) {
+        // Schemat är aktivt, använd nuvarande klockslag
+        startTime = currentTime;
+        newStartTime = startTime;
+      } else {
+        // Schemat är inte aktivt än, behåll dayStartTime
+        startTime = dayStartTime;
+      }
+    }
+    
+    // Första tasken får startTime
+    let taskIdx = updatedTasks.findIndex(t => t.id === todayTasks[0].id);
+    updatedTasks[taskIdx] = { ...updatedTasks[taskIdx], time: startTime };
+    
+    // Resten räknas från föregående task
+    for (let i = 1; i < todayTasks.length; i++) {
+      // Hämta föregående task från updatedTasks (inte todayTasks) för att få uppdaterad tid
+      const prevTaskId = todayTasks[i - 1].id;
+      const prevTaskIdx = updatedTasks.findIndex(t => t.id === prevTaskId);
+      const prevTaskData = updatedTasks[prevTaskIdx];
+      
+      const [h, m] = prevTaskData.time.split('.').map(Number);
+      const totalMin = h * 60 + m + prevTaskData.duration;
+      const newTime = `${String(Math.floor(totalMin / 60)).padStart(2, '0')}.${String(totalMin % 60).padStart(2, '0')}`;
+      
+      taskIdx = updatedTasks.findIndex(t => t.id === todayTasks[i].id);
+      updatedTasks[taskIdx] = { ...updatedTasks[taskIdx], time: newTime };
+    }
+  }
+
+  return { updatedTasks, newStartTime };
+};
+
+export const moveTaskDown = (
+  tasks: Task[],
+  taskId: number,
+  dayStartTime: string
+): { updatedTasks: Task[], newStartTime: string } => {
+  const taskIndex = tasks.findIndex(t => t.id === taskId);
+  if (taskIndex === -1) return { updatedTasks: tasks, newStartTime: dayStartTime };
+
+  const task = tasks[taskIndex];
+  const sectionTasks = tasks.filter(t => t.section === task.section && !t.completed);
+  const sectionIndex = sectionTasks.findIndex(t => t.id === taskId);
+  
+  if (sectionIndex >= sectionTasks.length - 1) return { updatedTasks: tasks, newStartTime: dayStartTime };
+
+  // Hitta den task vi ska byta plats med
+  const nextTask = sectionTasks[sectionIndex + 1];
+  const nextTaskIndex = tasks.findIndex(t => t.id === nextTask.id);
+
+  // Byt plats på de två tasks i arrayen
+  let updatedTasks = [...tasks];
+  [updatedTasks[taskIndex], updatedTasks[nextTaskIndex]] = [updatedTasks[nextTaskIndex], updatedTasks[taskIndex]];
+
+  let newStartTime = dayStartTime;
+
+  // Om det är i "today"-sektionen, räkna om alla tider
+  if (task.section === 'today') {
+    const todayTasks = updatedTasks.filter(t => t.section === 'today' && !t.completed);
+    
+    // Bestäm starttid baserat på om schemat är aktivt
+    let startTime = dayStartTime;
+    const now = new Date();
+    const currentTime = `${String(now.getHours()).padStart(2, '0')}.${String(now.getMinutes()).padStart(2, '0')}`;
+    
+    // Behandla '09.00' som ogiltig/default-tid
+    if (!dayStartTime || dayStartTime === '09.00') {
+      // Ingen dayStartTime finns eller det är default-värdet, använd nuvarande klockslag
+      startTime = currentTime;
+      newStartTime = startTime;
+    } else {
+      // Kolla om schemat är aktivt (nuvarande tid >= dayStartTime)
+      const [nowH, nowM] = currentTime.split('.').map(Number);
+      const [startH, startM] = dayStartTime.split('.').map(Number);
+      const nowMinutes = nowH * 60 + nowM;
+      const startMinutes = startH * 60 + startM;
+      
+      if (nowMinutes >= startMinutes) {
+        // Schemat är aktivt, använd nuvarande klockslag
+        startTime = currentTime;
+        newStartTime = startTime;
+      } else {
+        // Schemat är inte aktivt än, behåll dayStartTime
+        startTime = dayStartTime;
+      }
+    }
+    
+    // Första tasken får startTime
+    let taskIdx = updatedTasks.findIndex(t => t.id === todayTasks[0].id);
+    updatedTasks[taskIdx] = { ...updatedTasks[taskIdx], time: startTime };
+    
+    // Resten räknas från föregående task
+    for (let i = 1; i < todayTasks.length; i++) {
+      // Hämta föregående task från updatedTasks (inte todayTasks) för att få uppdaterad tid
+      const prevTaskId = todayTasks[i - 1].id;
+      const prevTaskIdx = updatedTasks.findIndex(t => t.id === prevTaskId);
+      const prevTaskData = updatedTasks[prevTaskIdx];
+      
+      const [h, m] = prevTaskData.time.split('.').map(Number);
+      const totalMin = h * 60 + m + prevTaskData.duration;
+      const newTime = `${String(Math.floor(totalMin / 60)).padStart(2, '0')}.${String(totalMin % 60).padStart(2, '0')}`;
+      
+      taskIdx = updatedTasks.findIndex(t => t.id === todayTasks[i].id);
+      updatedTasks[taskIdx] = { ...updatedTasks[taskIdx], time: newTime };
+    }
+  }
+
+  return { updatedTasks, newStartTime };
 };
