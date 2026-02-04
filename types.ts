@@ -7,4 +7,5 @@ export interface Task {
   completed: boolean;
   completedAt?: string;
   section: 'today' | 'thisWeek' | 'other';
+  isSavedTemplate?: boolean;
 }

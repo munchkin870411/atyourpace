@@ -16,62 +16,87 @@ export const toggleTask = (
     // Checka av - spara tiden
     updatedTasks[taskIndex] = { ...task, completed: true, completedAt: currentTime };
     
-    // Beräkna om nästa aktiva tasks
-    const remainingActive = updatedTasks.filter((t, i) => !t.completed && i > taskIndex);
+    // Bara räkna om om det är en today task
+    if (task.section !== 'today') {
+      return updatedTasks;
+    }
     
-    if (remainingActive.length > 0) {
-      let nextStartTime = currentTime;
-      
-      for (let activeTask of remainingActive) {
-        const taskIdx = updatedTasks.findIndex(t => t.id === activeTask.id);
-        updatedTasks[taskIdx] = { ...updatedTasks[taskIdx], time: nextStartTime };
+    // Beräkna om nästa aktiva today tasks
+    const todayTasks = updatedTasks.filter(t => t.section === 'today' && !t.completed);
+    const taskPositionInToday = todayTasks.findIndex(t => t.id === id);
+    
+    // Om det finns tasks efter denna i today
+    if (taskPositionInToday !== -1 && taskPositionInToday < todayTasks.length - 1) {
+      // Räkna om alla tasks efter denna
+      for (let i = taskPositionInToday; i < todayTasks.length; i++) {
+        const currentTask = todayTasks[i];
+        let startTime: string;
         
-        // Beräkna nästa starttid
-        const [h, m] = nextStartTime.split('.').map(Number);
-        const totalMin = h * 60 + m + updatedTasks[taskIdx].duration;
-        nextStartTime = `${String(Math.floor(totalMin / 60)).padStart(2, '0')}.${String(totalMin % 60).padStart(2, '0')}`;
+        if (i === taskPositionInToday) {
+          // Första efter completed task - använd currentTime
+          startTime = currentTime;
+        } else {
+          // Beräkna från föregående task
+          const prevTask = todayTasks[i - 1];
+          const prevTaskIdx = updatedTasks.findIndex(t => t.id === prevTask.id);
+          const prevTaskData = updatedTasks[prevTaskIdx];
+          const [h, m] = prevTaskData.time.split('.').map(Number);
+          const totalMin = h * 60 + m + prevTaskData.duration;
+          startTime = `${String(Math.floor(totalMin / 60)).padStart(2, '0')}.${String(totalMin % 60).padStart(2, '0')}`;
+        }
+        
+        const currentTaskIdx = updatedTasks.findIndex(t => t.id === currentTask.id);
+        updatedTasks[currentTaskIdx] = { ...updatedTasks[currentTaskIdx], time: startTime };
       }
     }
   } else {
     // Bocka av igen - omberäkna från denna task
     updatedTasks[taskIndex] = { ...task, completed: false, completedAt: undefined };
     
+    // Bara räkna om om det är en today task
+    if (task.section !== 'today') {
+      return updatedTasks;
+    }
+    
+    // Hitta alla today tasks som inte är completed
+    const todayTasks = updatedTasks.filter(t => t.section === 'today' && !t.completed);
+    const taskPositionInToday = todayTasks.findIndex(t => t.id === id);
+    
+    if (taskPositionInToday === -1) return updatedTasks;
+    
     // Hitta föregående task för att beräkna ny starttid
-    let newStartTime = task.time; // Behåll ursprunglig tid som standard
+    let newStartTime: string;
     
-    // Hitta alla aktiva tasks före denna
-    const tasksBeforeIndex = updatedTasks.slice(0, taskIndex);
-    const lastActiveTaskBefore = [...tasksBeforeIndex].reverse().find(t => !t.completed);
-    
-    if (lastActiveTaskBefore) {
-      // Om det finns en aktiv task före, beräkna från den
-      const [h, m] = lastActiveTaskBefore.time.split('.').map(Number);
-      const totalMin = h * 60 + m + lastActiveTaskBefore.duration;
+    if (taskPositionInToday === 0) {
+      // Det är första tasken, använd dess ursprungliga tid
+      newStartTime = task.time;
+    } else {
+      // Beräkna från föregående task i today-listan
+      const prevTask = todayTasks[taskPositionInToday - 1];
+      const prevTaskIdx = updatedTasks.findIndex(t => t.id === prevTask.id);
+      const prevTaskData = updatedTasks[prevTaskIdx];
+      const [h, m] = prevTaskData.time.split('.').map(Number);
+      const totalMin = h * 60 + m + prevTaskData.duration;
       newStartTime = `${String(Math.floor(totalMin / 60)).padStart(2, '0')}.${String(totalMin % 60).padStart(2, '0')}`;
-    } else if (taskIndex > 0) {
-      // Om alla tasks före är completed, använd senaste completedAt
-      const lastCompletedTask = [...tasksBeforeIndex].reverse().find(t => t.completed && t.completedAt);
-      if (lastCompletedTask && lastCompletedTask.completedAt) {
-        newStartTime = lastCompletedTask.completedAt;
-      }
     }
     
     updatedTasks[taskIndex] = { ...updatedTasks[taskIndex], time: newStartTime };
     
-    // Omberäkna alla tasks efter denna
-    const tasksAfterIndex = updatedTasks.slice(taskIndex + 1);
-    let nextStartTime = newStartTime;
-    const [h, m] = nextStartTime.split('.').map(Number);
-    const totalMin = h * 60 + m + updatedTasks[taskIndex].duration;
-    nextStartTime = `${String(Math.floor(totalMin / 60)).padStart(2, '0')}.${String(totalMin % 60).padStart(2, '0')}`;
-    
-    for (let i = taskIndex + 1; i < updatedTasks.length; i++) {
-      if (!updatedTasks[i].completed) {
-        updatedTasks[i] = { ...updatedTasks[i], time: nextStartTime };
-        const [h2, m2] = nextStartTime.split('.').map(Number);
-        const totalMin2 = h2 * 60 + m2 + updatedTasks[i].duration;
-        nextStartTime = `${String(Math.floor(totalMin2 / 60)).padStart(2, '0')}.${String(totalMin2 % 60).padStart(2, '0')}`;
-      }
+    // Omberäkna alla tasks efter denna i today-listan
+    for (let i = taskPositionInToday + 1; i < todayTasks.length; i++) {
+      const currentTask = todayTasks[i];
+      const prevTask = todayTasks[i - 1];
+      
+      // Hämta uppdaterad tid från updatedTasks
+      const prevTaskIdx = updatedTasks.findIndex(t => t.id === prevTask.id);
+      const prevTaskData = updatedTasks[prevTaskIdx];
+      
+      const [h, m] = prevTaskData.time.split('.').map(Number);
+      const totalMin = h * 60 + m + prevTaskData.duration;
+      const nextStartTime = `${String(Math.floor(totalMin / 60)).padStart(2, '0')}.${String(totalMin % 60).padStart(2, '0')}`;
+      
+      const currentTaskIdx = updatedTasks.findIndex(t => t.id === currentTask.id);
+      updatedTasks[currentTaskIdx] = { ...updatedTasks[currentTaskIdx], time: nextStartTime };
     }
   }
   

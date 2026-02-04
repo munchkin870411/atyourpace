@@ -63,8 +63,8 @@ export default function AddTaskModal({
     '#FFFFFF',
   ];
 
-  const uniqueTaskTemplates = Array.from(new Set(existingTasks.map((t) => t.text)))
-    .map((text) => existingTasks.find((t) => t.text === text)!)
+  const uniqueTaskTemplates = Array.from(new Set(existingTasks.filter(t => t.isSavedTemplate).map((t) => t.text)))
+    .map((text) => existingTasks.find((t) => t.text === text && t.isSavedTemplate)!)
     .filter((t) => t !== undefined && t.text !== 'Add your first task!');
 
   const selectExistingTask = (task: Task) => {
@@ -82,6 +82,26 @@ export default function AddTaskModal({
         duration: parseInt(duration),
         color: color,
         section: section,
+      });
+      // Reset form
+      setTaskText('');
+      setDuration('');
+      setColor('#000000');
+      setStartTime('');
+      setDropdownVisible(false);
+      setInfoVisible(false);
+    }
+  };
+
+  const handleSaveTask = () => {
+    if (taskText.trim() && duration.trim()) {
+      onAddTask({
+        text: taskText,
+        time: startTime,
+        duration: parseInt(duration),
+        color: color,
+        section: section,
+        isSavedTemplate: true,
       });
       // Reset form
       setTaskText('');
@@ -187,7 +207,7 @@ export default function AddTaskModal({
             </View>
 
             <Text style={styles.inputLabel}>Do you want to save your task?</Text>
-            <TouchableOpacity style={styles.saveButtonSingle} onPress={handleAddTask}>
+            <TouchableOpacity style={styles.saveButtonSingle} onPress={handleSaveTask}>
               <Text style={styles.saveButtonText}>Save Task</Text>
             </TouchableOpacity>
 

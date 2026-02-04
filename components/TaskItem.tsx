@@ -12,11 +12,12 @@ interface TaskItemProps {
   onMoveUp?: (id: number) => void;
   onMoveDown?: (id: number) => void;
   showTime?: boolean;
+  showDuration?: boolean;
   isFirst?: boolean;
   isLast?: boolean;
 }
 
-export default function TaskItem({ task, onToggle, onDelete, onEdit, onMoveToSection, onMoveUp, onMoveDown, showTime = true, isFirst = false, isLast = false }: TaskItemProps) {
+export default function TaskItem({ task, onToggle, onDelete, onEdit, onMoveToSection, onMoveUp, onMoveDown, showTime = true, showDuration = false, isFirst = false, isLast = false }: TaskItemProps) {
   const [menuVisible, setMenuVisible] = useState(false);
 
   const handleMoveToSection = (section: 'today' | 'thisWeek' | 'other') => {
@@ -65,6 +66,7 @@ export default function TaskItem({ task, onToggle, onDelete, onEdit, onMoveToSec
           {task.text}
         </Text>
         {showTime && <Text style={styles.taskTime}>{task.time}</Text>}
+        {showDuration && <Text style={styles.taskTime}>{task.duration} min</Text>}
       </TouchableOpacity>
       
       {onMoveToSection && (

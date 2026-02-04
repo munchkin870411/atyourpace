@@ -19,6 +19,14 @@ export default function ProgressSection({
   onEdit, 
   onMoveToSection 
 }: ProgressSectionProps) {
+  // Räkna ut total tid
+  const totalMinutes = completedTasks.reduce((sum, task) => sum + task.duration, 0);
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+  const totalTimeText = hours > 0 
+    ? `${hours} h ${minutes} minutes` 
+    : `${minutes} minutes`;
+  
   return (
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>Check your progress!</Text>
@@ -36,12 +44,13 @@ export default function ProgressSection({
                 onDelete={onDelete} 
                 onEdit={onEdit} 
                 onMoveToSection={onMoveToSection}
-                showTime={true} 
+                showTime={false}
+                showDuration={true}
               />
             ))}
             <View style={styles.totalTimeContainer}>
               <Text style={styles.totalTimeLabel}>Total time:</Text>
-              <Text style={styles.totalTimeValue}>2 h 45 minutes</Text>
+              <Text style={styles.totalTimeValue}>{totalTimeText}</Text>
             </View>
           </>
         )}
