@@ -226,7 +226,7 @@ export default function App(): React.JSX.Element {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['bottom', 'left', 'right']}>
       <StatusBar style="dark" />
       
       <Header />

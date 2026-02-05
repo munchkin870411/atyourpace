@@ -6,8 +6,8 @@ export const taskItemStyles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 8,
     borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
-    gap: 5,
+    borderBottomColor: '#8dc88474',
+    gap: 2,
   },
   taskContent: {
     flexDirection: 'row',
@@ -36,7 +36,7 @@ export const taskItemStyles = StyleSheet.create({
   },
   taskText: {
     flex: 1,
-    fontSize: 16,
+    fontSize: 16
   },
   taskTextCompleted: {
     textDecorationLine: 'line-through',
@@ -45,7 +45,7 @@ export const taskItemStyles = StyleSheet.create({
   taskTime: {
     fontSize: 16,
     color: '#666',
-    marginLeft: 10,
+    marginLeft: 2,
   },
   moveButton: {
     paddingHorizontal: 6,
@@ -53,7 +53,7 @@ export const taskItemStyles = StyleSheet.create({
   },
   moveIcon: {
     fontSize: 20,
-    color: '#007AFF',
+    color: '#018c29',
   },
   deleteButton: {
     paddingHorizontal: 6,
@@ -100,7 +100,7 @@ export const taskItemStyles = StyleSheet.create({
   reorderButtons: {
     flexDirection: 'column',
     gap: 1,
-    marginRight: 8,
+    marginRight: 2,
   },
   arrowButton: {
     width: 24,

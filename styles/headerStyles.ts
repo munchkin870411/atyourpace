@@ -8,8 +8,8 @@ export const headerStyles = StyleSheet.create({
     paddingLeft: 10,
     paddingRight: 20,
     borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
-    backgroundColor: '#cafcd4',
+    borderBottomColor: '#035f11',
+    backgroundColor: '#178a2ec6',
   },
   headerLeft: {
     flexDirection: 'row',

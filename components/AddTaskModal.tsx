@@ -57,8 +57,8 @@ export default function AddTaskModal({
     '#8B00FF',
     '#4169E1',
     '#00CED1',
-    '#808080',
     '#32CD32',
+    '#808080',
     '#000000',
     '#FFFFFF',
   ];

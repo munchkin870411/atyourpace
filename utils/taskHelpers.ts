@@ -133,8 +133,11 @@ export const addTask = (
     newStartTime = calculatedTime;
   }
   
+  // Hitta högsta befintliga ID och lägg till 1 för att säkerställa unikt ID
+  const maxId = tasks.length > 0 ? Math.max(...tasks.map(t => t.id)) : 0;
+  
   const newTask: Task = {
-    id: tasks.length + 1,
+    id: maxId + 1,
     ...newTaskData,
     time: calculatedTime,
     completed: false,
