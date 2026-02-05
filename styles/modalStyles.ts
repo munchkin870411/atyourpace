@@ -112,7 +112,7 @@ export const modalStyles = StyleSheet.create({
     flexWrap: 'wrap',
     gap: 14,
     marginTop: 10,
-    marginBottom: -50,
+    marginBottom: 15,
   },
   colorCircle: {
     width: 40,

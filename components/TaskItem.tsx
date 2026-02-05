@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Modal } from 'react-native';
 import { Task } from '../types';
 import { taskItemStyles as styles } from '../styles/taskItemStyles';
+import { ColorTheme } from '../utils/colorUtils';
 
 interface TaskItemProps {
   task: Task;
@@ -15,9 +16,10 @@ interface TaskItemProps {
   showDuration?: boolean;
   isFirst?: boolean;
   isLast?: boolean;
+  colorTheme?: ColorTheme;
 }
 
-export default function TaskItem({ task, onToggle, onDelete, onEdit, onMoveToSection, onMoveUp, onMoveDown, showTime = true, showDuration = false, isFirst = false, isLast = false }: TaskItemProps) {
+export default function TaskItem({ task, onToggle, onDelete, onEdit, onMoveToSection, onMoveUp, onMoveDown, showTime = true, showDuration = false, isFirst = false, isLast = false, colorTheme }: TaskItemProps) {
   const [menuVisible, setMenuVisible] = useState(false);
 
   const handleMoveToSection = (section: 'today' | 'thisWeek' | 'other') => {
@@ -37,14 +39,14 @@ export default function TaskItem({ task, onToggle, onDelete, onEdit, onMoveToSec
             onPress={() => !isFirst && onMoveUp(task.id)}
             disabled={isFirst}
           >
-            <Text style={[styles.arrowIcon, isFirst && styles.arrowIconDisabled]}>▲</Text>
+            <Text style={[styles.arrowIcon, { color: isFirst ? '#d0d0d0' : colorTheme?.primary || '#5bc47a' }]}>▲</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.arrowButton, isLast && styles.arrowButtonDisabled]}
             onPress={() => !isLast && onMoveDown(task.id)}
             disabled={isLast}
           >
-            <Text style={[styles.arrowIcon, isLast && styles.arrowIconDisabled]}>▼</Text>
+            <Text style={[styles.arrowIcon, { color: isLast ? '#d0d0d0' : colorTheme?.primary || '#5bc47a' }]}>▼</Text>
           </TouchableOpacity>
         </View>
       )}
@@ -75,7 +77,7 @@ export default function TaskItem({ task, onToggle, onDelete, onEdit, onMoveToSec
             style={styles.moveButton}
             onPress={() => setMenuVisible(true)}
           >
-            <Text style={styles.moveIcon}>⋯</Text>
+            <Text style={[styles.moveIcon, { color: colorTheme?.primary || '#018c29' }]}>⋯</Text>
           </TouchableOpacity>
 
           <Modal

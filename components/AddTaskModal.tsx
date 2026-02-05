@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { Task } from '../types';
 import { modalStyles as styles } from '../styles/modalStyles';
+import { ColorTheme, addAlpha } from '../utils/colorUtils';
 
 interface AddTaskModalProps {
   visible: boolean;
@@ -18,6 +19,7 @@ interface AddTaskModalProps {
   isFirstTask: boolean;
   section: 'today' | 'thisWeek' | 'other';
   editingTask?: Task | null;
+  colorTheme: ColorTheme;
 }
 
 export default function AddTaskModal({
@@ -28,6 +30,7 @@ export default function AddTaskModal({
   isFirstTask,
   section,
   editingTask,
+  colorTheme,
 }: AddTaskModalProps) {
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [infoVisible, setInfoVisible] = useState(false);
@@ -130,21 +133,21 @@ export default function AddTaskModal({
       transparent={true}
       onRequestClose={onClose}
     >
-      <View style={styles.modalOverlay}>
-        <View style={styles.modalContent}>
+      <View style={[styles.modalOverlay, { backgroundColor: addAlpha(colorTheme.primary, 0.8) }]}>
+        <View style={[styles.modalContent, { backgroundColor: colorTheme.lighter, borderColor: colorTheme.dark }]}>
           <ScrollView showsVerticalScrollIndicator={false}>
             <Text style={styles.modalTitle}>{editingTask ? 'Edit task' : 'Add a task'}</Text>
 
             <Text style={styles.inputLabel}>What do you need to do? *</Text>
             <TextInput
-              style={styles.input}
+              style={[styles.input, { backgroundColor: colorTheme.lightest }]}
               placeholder="Write task here..."
               value={taskText}
               onChangeText={setTaskText}
             />
 
             <TouchableOpacity
-              style={[styles.input, styles.dropdownPlaceholder, styles.dropdownButton]}
+              style={[styles.input, styles.dropdownPlaceholder, styles.dropdownButton, { backgroundColor: colorTheme.lightest }]}
               onPress={() => setDropdownVisible(!dropdownVisible)}
             >
               <Text style={styles.dropdownText}>Choose existing...</Text>
@@ -176,7 +179,7 @@ export default function AddTaskModal({
 
             <Text style={styles.inputLabel}>How long will it take?</Text>
             <TextInput
-              style={[styles.input, styles.inputSmall]}
+              style={[styles.input, styles.inputSmall, { backgroundColor: colorTheme.lightest }]}
               placeholder="Minutes..."
               keyboardType="numeric"
               value={duration}
@@ -186,7 +189,7 @@ export default function AddTaskModal({
             <Text style={styles.inputLabel}>Pick a color for your task?</Text>
             <View style={styles.colorPickerContainer}>
               <TextInput
-                style={[styles.input, styles.colorInput]}
+                style={[styles.input, styles.colorInput, { backgroundColor: colorTheme.lightest }]}
                 value={color}
                 onChangeText={setColor}
               />
@@ -200,6 +203,7 @@ export default function AddTaskModal({
                     styles.colorCircle,
                     { backgroundColor: c },
                     c === color && styles.colorCircleSelected,
+                    c === color && { borderColor: colorTheme.darker },
                   ]}
                   onPress={() => setColor(c)}
                 />
@@ -207,8 +211,8 @@ export default function AddTaskModal({
             </View>
 
             <Text style={styles.inputLabel}>Do you want to save your task?</Text>
-            <TouchableOpacity style={styles.saveButtonSingle} onPress={handleSaveTask}>
-              <Text style={styles.saveButtonText}>Save Task</Text>
+            <TouchableOpacity style={[styles.saveButtonSingle, { backgroundColor: colorTheme.dark, borderColor: colorTheme.darker }]} onPress={handleSaveTask}>
+              <Text style={[styles.saveButtonText, { color: '#000000' }]}>Save Task</Text>
             </TouchableOpacity>
 
             {isFirstTask && (
@@ -216,7 +220,7 @@ export default function AddTaskModal({
                 <Text style={styles.inputLabel}>Pick a starting time?</Text>
                 <View style={styles.startTimeContainer}>
                   <TextInput
-                    style={[styles.input, styles.inputSmall]}
+                    style={[styles.input, styles.inputSmall, { backgroundColor: colorTheme.lightest }]}
                     placeholder="09.00"
                     value={startTime}
                     onChangeText={setStartTime}
@@ -242,12 +246,12 @@ export default function AddTaskModal({
             )}
 
             <View style={styles.modalButtons}>
-              <TouchableOpacity style={styles.cancelButton} onPress={handleCancel}>
-                <Text style={styles.cancelButtonText}>Cancel</Text>
+              <TouchableOpacity style={[styles.cancelButton, { backgroundColor: colorTheme.dark, borderColor: colorTheme.darker }]} onPress={handleCancel}>
+                <Text style={[styles.cancelButtonText, { color: '#000000' }]}>Cancel</Text>
               </TouchableOpacity>
 
-              <TouchableOpacity style={styles.addTaskButton} onPress={handleAddTask}>
-                <Text style={styles.addTaskButtonText}>Add task</Text>
+              <TouchableOpacity style={[styles.addTaskButton, { backgroundColor: colorTheme.darkest, borderColor: colorTheme.darker }]} onPress={handleAddTask}>
+                <Text style={[styles.addTaskButtonText, { color: '#000000' }]}>Add task</Text>
               </TouchableOpacity>
             </View>
           </ScrollView>

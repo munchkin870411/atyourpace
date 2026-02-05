@@ -1,7 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import { ScrollView, Animated, PanResponder } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Task } from './types';
 import Header from './components/Header';
@@ -9,17 +9,23 @@ import TodaySection from './components/TodaySection';
 import ProgressSection from './components/ProgressSection';
 import BottomSheet from './components/BottomSheet';
 import AddTaskModal from './components/AddTaskModal';
+import ProfileModal from './components/ProfileModal';
 import { appStyles as styles } from './styles/appStyles';
 import * as taskHelpers from './utils/taskHelpers';
+import { generateColorTheme, ColorTheme, addAlpha } from './utils/colorUtils';
 
 export default function App(): React.JSX.Element {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
+  const [profileModalVisible, setProfileModalVisible] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [currentSection, setCurrentSection] = useState<'today' | 'thisWeek' | 'other'>('today');
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [dayStartTime, setDayStartTime] = useState<string>('');
-  
+  const [timeFormat, setTimeFormat] = useState<'schedule' | 'minutes' | 'notime'>('schedule');
+  const [selectedAvatar, setSelectedAvatar] = useState<string>('�');  const [selectedColor, setSelectedColor] = useState<string>('#99E699');
+  const colorTheme = useMemo(() => generateColorTheme(selectedColor), [selectedColor]);
+
   const translateY = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(500)).current;
 
@@ -153,6 +159,24 @@ export default function App(): React.JSX.Element {
       const savedTasks = await AsyncStorage.getItem('tasks');
       const lastClearedDate = await AsyncStorage.getItem('lastClearedDate');
       const savedStartTime = await AsyncStorage.getItem('dayStartTime');
+      const savedTimeFormat = await AsyncStorage.getItem('timeFormat');
+      const savedAvatar = await AsyncStorage.getItem('selectedAvatar');
+      const savedColor = await AsyncStorage.getItem('selectedColor');
+      
+      // Ladda timeFormat
+      if (savedTimeFormat) {
+        setTimeFormat(savedTimeFormat as 'schedule' | 'minutes' | 'notime');
+      }
+      
+      // Ladda avatar
+      if (savedAvatar) {
+        setSelectedAvatar(savedAvatar);
+      }
+      
+      // Ladda color
+      if (savedColor) {
+        setSelectedColor(savedColor);
+      }
       
       // Kontrollera om det är en ny dag
       const today = new Date().toDateString();
@@ -226,12 +250,15 @@ export default function App(): React.JSX.Element {
   };
 
   return (
-    <SafeAreaView style={styles.container} edges={['bottom', 'left', 'right']}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colorTheme.light }]} edges={['bottom', 'left', 'right']}>
       <StatusBar style="dark" />
       
-      <Header />
+      <Header onProfilePress={() => setProfileModalVisible(true)} avatar={selectedAvatar} colorTheme={colorTheme} />
 
-      <ScrollView style={styles.content}>
+      <ScrollView 
+        style={styles.content}
+        contentContainerStyle={{ paddingBottom: isExpanded ? 500 : 150 }}
+      >
         <TodaySection
           activeTasks={activeTasks}
           onToggle={toggleTaskHandler}
@@ -244,6 +271,8 @@ export default function App(): React.JSX.Element {
             setCurrentSection('today');
             setModalVisible(true);
           }}
+          timeFormat={timeFormat}
+          colorTheme={colorTheme}
         />
 
         <ProgressSection
@@ -252,6 +281,7 @@ export default function App(): React.JSX.Element {
           onDelete={deleteTask}
           onEdit={handleEditTask}
           onMoveToSection={moveTaskToSectionHandler}
+          colorTheme={colorTheme}
         />
       </ScrollView>
 
@@ -276,6 +306,7 @@ export default function App(): React.JSX.Element {
           setCurrentSection('other');
           setModalVisible(true);
         }}
+        colorTheme={colorTheme}
       />
 
       <AddTaskModal 
@@ -289,6 +320,18 @@ export default function App(): React.JSX.Element {
         isFirstTask={activeTasks.length === 0}
         section={currentSection}
         editingTask={editingTask}
+        colorTheme={colorTheme}
+      />
+
+      <ProfileModal
+        visible={profileModalVisible}
+        onClose={() => setProfileModalVisible(false)}
+        onTimeFormatChange={setTimeFormat}
+        selectedAvatar={selectedAvatar}
+        onAvatarChange={setSelectedAvatar}
+        selectedColor={selectedColor}
+        onColorChange={setSelectedColor}
+        colorTheme={colorTheme}
       />
     </SafeAreaView>
   );

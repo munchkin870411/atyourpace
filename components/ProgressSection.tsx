@@ -3,6 +3,7 @@ import { View, Text } from 'react-native';
 import { Task } from '../types';
 import TaskItem from './TaskItem';
 import { appStyles as styles } from '../styles/appStyles';
+import { ColorTheme } from '../utils/colorUtils';
 
 interface ProgressSectionProps {
   completedTasks: Task[];
@@ -10,15 +11,10 @@ interface ProgressSectionProps {
   onDelete: (id: number) => void;
   onEdit: (task: Task) => void;
   onMoveToSection: (id: number, section: 'today' | 'thisWeek' | 'other') => void;
+  colorTheme: ColorTheme;
 }
 
-export default function ProgressSection({ 
-  completedTasks, 
-  onToggle, 
-  onDelete, 
-  onEdit, 
-  onMoveToSection 
-}: ProgressSectionProps) {
+export default function ProgressSection({ completedTasks, onToggle, onDelete, onEdit, onMoveToSection, colorTheme }: ProgressSectionProps) {
   // Räkna ut total tid
   const totalMinutes = completedTasks.reduce((sum, task) => sum + task.duration, 0);
   const hours = Math.floor(totalMinutes / 60);
@@ -31,7 +27,7 @@ export default function ProgressSection({
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>Check your progress!</Text>
       
-      <View style={styles.progressContainer}>
+      <View style={[styles.progressContainer, { backgroundColor: colorTheme.lightest, borderColor: colorTheme.dark }]}>
         {completedTasks.length === 0 ? (
           <Text style={styles.emptyText}>No completed tasks yet</Text>
         ) : (
@@ -46,6 +42,7 @@ export default function ProgressSection({
                 onMoveToSection={onMoveToSection}
                 showTime={false}
                 showDuration={true}
+                colorTheme={colorTheme}
               />
             ))}
             <View style={styles.totalTimeContainer}>
