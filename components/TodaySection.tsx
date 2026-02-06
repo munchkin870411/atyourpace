@@ -32,10 +32,22 @@ export default function TodaySection({
 }: TodaySectionProps) {
   return (
     <View style={styles.section}>
-      <View style={styles.sectionHeader}>
+      <View style={[styles.sectionHeader, { overflow: 'visible' }]}>
         <Text style={styles.sectionTitle}>Today</Text>
         <TouchableOpacity 
-          style={[styles.addButton, { backgroundColor: colorTheme.darker, borderColor: colorTheme.darkest }]}
+          style={{
+            backgroundColor: colorTheme.darker, 
+            borderColor: colorTheme.darkest,
+            paddingHorizontal: 15,
+            paddingVertical: 8,
+            borderWidth: 1,
+            borderRadius: 12,
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 0.5,
+            shadowRadius: 6,
+            elevation: 8
+          }}
           onPress={onAddTask}
         >
           <Text style={styles.addButtonText}>Add Task</Text>

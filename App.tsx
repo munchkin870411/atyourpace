@@ -1,6 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
-import { ScrollView, Animated, PanResponder } from 'react-native';
+import { ScrollView, Animated, PanResponder, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Task } from './types';
@@ -250,7 +251,12 @@ export default function App(): React.JSX.Element {
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colorTheme.light }]} edges={['bottom', 'left', 'right']}>
+    <SafeAreaView style={styles.container} edges={['bottom', 'left', 'right']}>
+      <LinearGradient
+        colors={[colorTheme.lightest, colorTheme.light]}
+        style={{ position: 'absolute', left: 0, right: 0, top: 0, bottom: 0 }}
+      />
+      
       <StatusBar style="dark" />
       
       <Header onProfilePress={() => setProfileModalVisible(true)} avatar={selectedAvatar} colorTheme={colorTheme} />

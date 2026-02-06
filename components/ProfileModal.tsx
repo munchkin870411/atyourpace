@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { profileModalStyles as styles } from '../styles/profileModalStyles';
 import { ColorTheme } from '../utils/colorUtils';
@@ -77,7 +78,12 @@ export default function ProfileModal({ visible, onClose, onTimeFormatChange, sel
       onRequestClose={onClose}
     >
       <View style={styles.overlay}>
-        <View style={[styles.modalContainer, { backgroundColor: colorTheme.lighter }]}>
+        <View style={[styles.modalContainer, { backgroundColor: 'transparent', overflow: 'hidden' }]}>
+          <LinearGradient
+            colors={[colorTheme.lightest, colorTheme.light]}
+            style={{ position: 'absolute', left: 0, right: 0, top: 0, bottom: 0 }}
+            pointerEvents="none"
+          />
           <View style={[styles.header, { backgroundColor: colorTheme.darker }]}>
             <Text style={[styles.headerTitle, { color: '#000000' }]}>Edit your profile</Text>
             <TouchableOpacity style={[styles.avatarButton, { backgroundColor: 'transparent' }]} onPress={onClose}>
@@ -172,7 +178,21 @@ export default function ProfileModal({ visible, onClose, onTimeFormatChange, sel
               </View>
             </View>
 
-            <TouchableOpacity style={[styles.saveButton, { backgroundColor: colorTheme.darkest }]} onPress={handleSave}>
+            <TouchableOpacity 
+              style={[
+                styles.saveButton, 
+                { 
+                  backgroundColor: colorTheme.darkest,
+                  borderRadius: 12,
+                  shadowColor: '#000',
+                  shadowOffset: { width: 0, height: 3 },
+                  shadowOpacity: 0.3,
+                  shadowRadius: 4,
+                  elevation: 5
+                }
+              ]} 
+              onPress={handleSave}
+            >
               <Text style={[styles.saveButtonText, { color: '#000000' }]}>Save</Text>
             </TouchableOpacity>
           </ScrollView>

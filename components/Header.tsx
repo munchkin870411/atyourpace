@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, Image, Platform, StatusBar, TouchableOpacity } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { headerStyles as styles } from '../styles/headerStyles';
 import { ColorTheme } from '../utils/colorUtils';
 
@@ -13,7 +14,12 @@ export default function Header({ onProfilePress, avatar, colorTheme }: HeaderPro
   const statusBarHeight = Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 44;
   
   return (
-    <View style={[styles.header, { paddingTop: statusBarHeight, backgroundColor: colorTheme.darker, borderBottomColor: colorTheme.darkest }]}>
+    <View style={[styles.header, { paddingTop: statusBarHeight, backgroundColor: 'transparent', borderBottomColor: colorTheme.darkest, overflow: 'hidden' }]}>
+      <LinearGradient
+        colors={[colorTheme.primary, colorTheme.darker]}
+        style={{ position: 'absolute', left: 0, right: 0, top: 0, bottom: 0 }}
+        pointerEvents="none"
+      />
       <View style={styles.headerLeft}>
         <Image 
           source={require('../assets/logo.png')} 

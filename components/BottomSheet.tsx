@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Animated, PanResponder } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Task } from '../types';
 import TaskItem from './TaskItem';
 import { appStyles as styles } from '../styles/appStyles';
@@ -43,10 +44,15 @@ export default function BottomSheet({
   if (!isExpanded) {
     return (
       <View 
-        style={[styles.bottomSheetToggle, { backgroundColor: colorTheme.primary, borderTopColor: colorTheme.dark }]}
+        style={[styles.bottomSheetToggle, { borderTopColor: colorTheme.dark, overflow: 'hidden' }]}
         {...panResponder.panHandlers}
       >
-        <View style={[styles.dragHandle, { backgroundColor: colorTheme.dark }]} />
+        <LinearGradient
+          colors={[colorTheme.dark, colorTheme.lighter]}
+          style={{ position: 'absolute', left: 0, right: 0, top: 0, bottom: 0 }}
+          pointerEvents="none"
+        />
+        <View style={[styles.dragHandle, { backgroundColor: colorTheme.darkest }]} />
       </View>
     );
   }
@@ -55,20 +61,41 @@ export default function BottomSheet({
     <Animated.View 
       style={[
         styles.bottomSheet,
-        { backgroundColor: colorTheme.primary, borderTopColor: colorTheme.dark },
+        { borderTopColor: colorTheme.dark, overflow: 'hidden' },
         { transform: [{ translateY: Animated.add(translateY, slideAnim) }] }
       ]}
     >
+      <LinearGradient
+        colors={[colorTheme.dark, colorTheme.lighter]}
+        style={{ position: 'absolute', left: 0, right: 0, top: 0, bottom: 0 }}
+        pointerEvents="none"
+      />
       <View {...panResponder.panHandlers} style={styles.bottomSheetHandle}>
-        <View style={[styles.dragHandle, { backgroundColor: colorTheme.dark }]} />
+        <View style={[styles.dragHandle, { backgroundColor: colorTheme.darkest }]} />
       </View>
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 20 }}>
+      <ScrollView 
+        showsVerticalScrollIndicator={false} 
+        contentContainerStyle={{ paddingBottom: 20 }}
+        style={{ backgroundColor: 'transparent' }}
+      >
         {/* This week Section */}
         <View style={styles.bottomSection}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>This week</Text>
             <TouchableOpacity 
-              style={[styles.addButton, { backgroundColor: colorTheme.darker, borderColor: colorTheme.darkest }]}
+              style={[
+                styles.addButton, 
+                { 
+                  backgroundColor: colorTheme.darker, 
+                  borderColor: colorTheme.darkest,
+                  borderRadius: 12,
+                  shadowColor: '#000',
+                  shadowOffset: { width: 0, height: 3 },
+                  shadowOpacity: 0.3,
+                  shadowRadius: 4,
+                  elevation: 5
+                }
+              ]}
               onPress={onAddThisWeekTask}
             >
               <Text style={styles.addButtonText}>Add task</Text>
@@ -104,7 +131,19 @@ export default function BottomSheet({
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Other tasks</Text>
             <TouchableOpacity 
-              style={[styles.addButton, { backgroundColor: colorTheme.darker, borderColor: colorTheme.darkest }]}
+              style={[
+                styles.addButton, 
+                { 
+                  backgroundColor: colorTheme.darker, 
+                  borderColor: colorTheme.darkest,
+                  borderRadius: 12,
+                  shadowColor: '#000',
+                  shadowOffset: { width: 0, height: 3 },
+                  shadowOpacity: 0.3,
+                  shadowRadius: 4,
+                  elevation: 5
+                }
+              ]}
               onPress={onAddOtherTask}
             >
               <Text style={styles.addButtonText}>Add task</Text>
