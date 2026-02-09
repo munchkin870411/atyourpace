@@ -16,6 +16,7 @@ interface AddTaskModalProps {
   visible: boolean;
   onClose: () => void;
   onAddTask: (task: Omit<Task, 'id' | 'completed'>) => void;
+  onDelete: (id: number) => void;
   existingTasks: Task[];
   isFirstTask: boolean;
   section: 'today' | 'thisWeek' | 'other';
@@ -27,6 +28,7 @@ export default function AddTaskModal({
   visible,
   onClose,
   onAddTask,
+  onDelete,
   existingTasks,
   isFirstTask,
   section,
@@ -64,7 +66,6 @@ export default function AddTaskModal({
     '#32CD32',
     '#808080',
     '#000000',
-    '#FFFFFF',
   ];
 
   const uniqueTaskTemplates = Array.from(new Set(existingTasks.filter(t => t.isSavedTemplate).map((t) => t.text)))
@@ -158,10 +159,11 @@ export default function AddTaskModal({
           </View>
           
           <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: 25 }}>
-            <Text style={styles.inputLabel}>What do you need to do? *</Text>
+            <Text style={[styles.inputLabel, { color: colorTheme.textColor }]}>What do you need to do? *</Text>
             <TextInput
-              style={[styles.input, { backgroundColor: colorTheme.lightest }]}
+              style={[styles.input, { backgroundColor: colorTheme.lightest, color: colorTheme.textColor }]}
               placeholder="Write task here..."
+              placeholderTextColor={colorTheme.textColor === '#FFFFFF' ? '#888888' : '#666666'}
               value={taskText}
               onChangeText={setTaskText}
             />
@@ -170,51 +172,53 @@ export default function AddTaskModal({
               style={[styles.input, styles.dropdownPlaceholder, styles.dropdownButton, { backgroundColor: colorTheme.lightest }]}
               onPress={() => setDropdownVisible(!dropdownVisible)}
             >
-              <Text style={styles.dropdownText}>Choose existing...</Text>
-              <Text style={styles.dropdownArrow}>▼</Text>
+              <Text style={[styles.dropdownText, { color: colorTheme.textColor }]}>Choose existing...</Text>
+              <Text style={[styles.dropdownArrow, { color: colorTheme.textColor }]}>▼</Text>
             </TouchableOpacity>
 
             {dropdownVisible && (
-              <View style={styles.dropdownList}>
-                {uniqueTaskTemplates.map((task) => (
-                  <TouchableOpacity
-                    key={task.id}
-                    style={styles.dropdownItem}
-                    onPress={() => selectExistingTask(task)}
-                  >
-                    <View
-                      style={[styles.taskColorDot, { backgroundColor: task.color }]}
-                    />
-                    <Text style={styles.dropdownItemText}>{task.text}</Text>
-                    <Text style={styles.dropdownItemDuration}>
-                      {task.duration} min
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-                {uniqueTaskTemplates.length === 0 && (
-                  <Text style={styles.dropdownEmpty}>No saved tasks yet</Text>
-                )}
+              <View style={[styles.dropdownList, { maxHeight: 200 }]}>
+                <ScrollView nestedScrollEnabled={true} showsVerticalScrollIndicator={true}>
+                  {uniqueTaskTemplates.map((task) => (
+                    <View key={task.id} style={styles.dropdownItem}>
+                      <TouchableOpacity
+                        style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}
+                        onPress={() => selectExistingTask(task)}
+                      >
+                        <View
+                          style={[styles.taskColorDot, { backgroundColor: task.color }]}
+                        />
+                        <Text style={[styles.dropdownItemText, { color: colorTheme.textColor }]}>{task.text}</Text>
+                        <Text style={[styles.dropdownItemDuration, { color: colorTheme.textColor }]}>
+                          {task.duration} min
+                        </Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        onPress={() => onDelete(task.id)}
+                        style={{ paddingLeft: 10 }}
+                      >
+                        <Text style={{ fontSize: 18, color: '#DC143C', fontWeight: 'bold' }}>×</Text>
+                      </TouchableOpacity>
+                    </View>
+                  ))}
+                  {uniqueTaskTemplates.length === 0 && (
+                    <Text style={[styles.dropdownEmpty, { color: colorTheme.textColor }]}>No saved tasks yet</Text>
+                  )}
+                </ScrollView>
               </View>
             )}
 
-            <Text style={styles.inputLabel}>How long will it take?</Text>
+            <Text style={[styles.inputLabel, { color: colorTheme.textColor }]}>How long will it take?</Text>
             <TextInput
-              style={[styles.input, styles.inputSmall, { backgroundColor: colorTheme.lightest }]}
+              style={[styles.input, styles.inputSmall, { backgroundColor: colorTheme.lightest, color: colorTheme.textColor }]}
               placeholder="Minutes..."
+              placeholderTextColor={colorTheme.textColor === '#FFFFFF' ? '#888888' : '#666666'}
               keyboardType="numeric"
               value={duration}
               onChangeText={setDuration}
             />
 
-            <Text style={styles.inputLabel}>Pick a color for your task?</Text>
-            <View style={styles.colorPickerContainer}>
-              <TextInput
-                style={[styles.input, styles.colorInput, { backgroundColor: colorTheme.lightest }]}
-                value={color}
-                onChangeText={setColor}
-              />
-              <View style={[styles.colorPreview, { backgroundColor: color }]} />
-            </View>
+            <Text style={[styles.inputLabel, { color: colorTheme.textColor }]}>Pick a color for your task?</Text>
             <View style={styles.colorGrid}>
               {colors.map((c, index) => (
                 <TouchableOpacity
@@ -230,33 +234,14 @@ export default function AddTaskModal({
               ))}
             </View>
 
-            <Text style={styles.inputLabel}>Do you want to save your task?</Text>
-            <TouchableOpacity 
-              style={[
-                styles.saveButtonSingle, 
-                { 
-                  backgroundColor: colorTheme.dark, 
-                  borderColor: colorTheme.darker,
-                  borderRadius: 12,
-                  shadowColor: '#000',
-                  shadowOffset: { width: 0, height: 3 },
-                  shadowOpacity: 0.3,
-                  shadowRadius: 4,
-                  elevation: 5
-                }
-              ]} 
-              onPress={handleSaveTask}
-            >
-              <Text style={[styles.saveButtonText, { color: '#000000' }]}>Save Task</Text>
-            </TouchableOpacity>
-
             {isFirstTask && (
               <>
-                <Text style={styles.inputLabel}>Pick a starting time?</Text>
+                <Text style={[styles.inputLabel, { color: colorTheme.textColor }]}>Pick a starting time?</Text>
                 <View style={styles.startTimeContainer}>
                   <TextInput
-                    style={[styles.input, styles.inputSmall, { backgroundColor: colorTheme.lightest }]}
+                    style={[styles.input, styles.inputSmall, { backgroundColor: colorTheme.lightest, color: colorTheme.textColor }]}
                     placeholder="09.00"
+                    placeholderTextColor={colorTheme.textColor === '#FFFFFF' ? '#888888' : '#666666'}
                     value={startTime}
                     onChangeText={setStartTime}
                   />
@@ -267,11 +252,11 @@ export default function AddTaskModal({
 
                 {infoVisible && (
                   <View style={styles.infoBox}>
-                    <Text style={styles.infoText}>
+                    <Text style={[styles.infoText, { color: colorTheme.textColor }]}>
                       Syns endast på första uppgiften för dagen, för att ha en start tid
                       på schemat.
                     </Text>
-                    <Text style={styles.infoText}>
+                    <Text style={[styles.infoText, { color: colorTheme.textColor }]}>
                       Do you want to start right away or do you want to wait? It is
                       completely up to you!
                     </Text>
@@ -295,9 +280,9 @@ export default function AddTaskModal({
                     elevation: 5
                   }
                 ]} 
-                onPress={handleCancel}
+                onPress={handleSaveTask}
               >
-                <Text style={[styles.cancelButtonText, { color: '#000000' }]}>Cancel</Text>
+                <Text style={[styles.cancelButtonText, { color: '#000000' }]}>Save Task</Text>
               </TouchableOpacity>
 
               <TouchableOpacity 

@@ -25,7 +25,7 @@ interface ProfileModalProps {
 const avatars = ['😀', '😎', '🎨', '🚀', '⭐', '🌈', '🎵', '🍕', '👤', '🌸', '🐱', '🎮'];
 const colors = [
   '#FFB3E6', '#D4A5F0', '#A8C8FF', '#A8F0F0',
-  '#99E699', '#B5B5B5', '#909090', '#FAFAFA'
+  '#99E699', '#20B2AA', '#909090', '#FAFAFA'
 ];
 
 export default function ProfileModal({ visible, onClose, onTimeFormatChange, selectedAvatar, onAvatarChange, selectedColor, onColorChange, colorTheme }: ProfileModalProps) {
@@ -70,12 +70,20 @@ export default function ProfileModal({ visible, onClose, onTimeFormatChange, sel
     }
   };
 
+  const handleClose = () => {
+    // Återställ färgen till originalet om användaren inte sparar
+    onColorChange(selectedColor);
+    setLocalColor(selectedColor);
+    setLocalAvatar(selectedAvatar);
+    onClose();
+  };
+
   return (
     <Modal
       visible={visible}
       animationType="slide"
       transparent={true}
-      onRequestClose={onClose}
+      onRequestClose={handleClose}
     >
       <View style={styles.overlay}>
         <View style={[styles.modalContainer, { backgroundColor: 'transparent', overflow: 'hidden' }]}>
@@ -86,60 +94,65 @@ export default function ProfileModal({ visible, onClose, onTimeFormatChange, sel
           />
           <View style={[styles.header, { backgroundColor: colorTheme.darker }]}>
             <Text style={[styles.headerTitle, { color: '#000000' }]}>Edit your profile</Text>
-            <TouchableOpacity style={[styles.avatarButton, { backgroundColor: 'transparent' }]} onPress={onClose}>
+            <TouchableOpacity style={[styles.avatarButton, { backgroundColor: 'transparent' }]} onPress={handleClose}>
               <Text style={[styles.avatarButtonText, { fontSize: 26 }]}>{localAvatar}</Text>
             </TouchableOpacity>
           </View>
 
-          <ScrollView style={styles.scrollContent}>
-            <View style={styles.section}>
-              <Text style={[styles.sectionTitle, { color: '#000000' }]}>Choose your avatar</Text>
-              <View style={styles.avatarGrid}>
+          <ScrollView style={[styles.scrollContent, { padding: 17 }]}>
+            <View style={[styles.section, { marginBottom: 25 }]}>
+              <Text style={[styles.sectionTitle, { color: colorTheme.textColor, fontSize: 17, marginBottom: 10 }]}>Choose your avatar</Text>
+              <View style={[styles.avatarGrid, { gap: 8 }]}>
                 {avatars.map((avatar, index) => (
                   <TouchableOpacity
                     key={index}
                     style={[
                       styles.avatarCircle,
+                      { width: 40, height: 40, borderRadius: 20 },
                       localAvatar === avatar && [styles.avatarCircleSelected, { borderColor: colorTheme.dark }],
                     ]}
                     onPress={() => setLocalAvatar(avatar)}
                   >
-                    <Text style={styles.avatarText}>{avatar}</Text>
+                    <Text style={[styles.avatarText, { fontSize: 22 }]}>{avatar}</Text>
                   </TouchableOpacity>
                 ))}
               </View>
             </View>
 
-            <View style={styles.section}>
-              <Text style={[styles.sectionTitle, { color: '#000000' }]}>Pick a color theme</Text>
-              <View style={styles.colorGrid}>
+            <View style={[styles.section, { marginBottom: 25 }]}>
+              <Text style={[styles.sectionTitle, { color: colorTheme.textColor, fontSize: 17, marginBottom: 10 }]}>Pick a color theme</Text>
+              <View style={[styles.colorGrid, { gap: 12 }]}>
                 {colors.map((color, index) => (
                   <TouchableOpacity
                     key={index}
                     style={[
                       styles.colorCircle,
-                      { backgroundColor: color },
+                      { backgroundColor: color, width: 52, height: 52, borderRadius: 26 },
                       localColor === color && [styles.colorCircleSelected, { borderColor: colorTheme.dark }],
                     ]}
-                    onPress={() => setLocalColor(color)}
+                    onPress={() => {
+                      setLocalColor(color);
+                      onColorChange(color);
+                    }}
                   />
                 ))}
               </View>
             </View>
 
-            <View style={styles.section}>
-              <Text style={[styles.sectionTitle, { color: '#000000' }]}>Choose time format</Text>
-              <View style={styles.timeFormatContainer}>
+            <View style={[styles.section, { marginBottom: 18 }]}>
+              <Text style={[styles.sectionTitle, { color: colorTheme.textColor, fontSize: 17, marginBottom: 10 }]}>Choose time format</Text>
+              <View style={[styles.timeFormatContainer, { gap: 8 }]}>
                 <TouchableOpacity
                   style={[
                     styles.timeFormatButton,
-                    { backgroundColor: colorTheme.lightest },
+                    { backgroundColor: colorTheme.lightest, paddingVertical: 11 },
                     timeFormat === 'schedule' && { backgroundColor: colorTheme.darker },
                   ]}
                   onPress={() => setTimeFormat('schedule')}
                 >
                   <Text style={[
                     styles.timeFormatText,
+                    { color: timeFormat === 'schedule' ? '#000000' : colorTheme.textColor },
                     timeFormat === 'schedule' && styles.timeFormatTextSelected,
                   ]}>
                     Schedule
@@ -148,13 +161,14 @@ export default function ProfileModal({ visible, onClose, onTimeFormatChange, sel
                 <TouchableOpacity
                   style={[
                     styles.timeFormatButton,
-                    { backgroundColor: colorTheme.lightest },
+                    { backgroundColor: colorTheme.lightest, paddingVertical: 11 },
                     timeFormat === 'minutes' && { backgroundColor: colorTheme.darker },
                   ]}
                   onPress={() => setTimeFormat('minutes')}
                 >
                   <Text style={[
                     styles.timeFormatText,
+                    { color: timeFormat === 'minutes' ? '#000000' : colorTheme.textColor },
                     timeFormat === 'minutes' && styles.timeFormatTextSelected,
                   ]}>
                     Minutes
@@ -163,13 +177,14 @@ export default function ProfileModal({ visible, onClose, onTimeFormatChange, sel
                 <TouchableOpacity
                   style={[
                     styles.timeFormatButton,
-                    { backgroundColor: colorTheme.lightest },
+                    { backgroundColor: colorTheme.lightest, paddingVertical: 11 },
                     timeFormat === 'notime' && { backgroundColor: colorTheme.darker },
                   ]}
                   onPress={() => setTimeFormat('notime')}
                 >
                   <Text style={[
                     styles.timeFormatText,
+                    { color: timeFormat === 'notime' ? '#000000' : colorTheme.textColor },
                     timeFormat === 'notime' && styles.timeFormatTextSelected,
                   ]}>
                     No time
@@ -193,7 +208,7 @@ export default function ProfileModal({ visible, onClose, onTimeFormatChange, sel
               ]} 
               onPress={handleSave}
             >
-              <Text style={[styles.saveButtonText, { color: '#000000' }]}>Save</Text>
+              <Text style={[styles.saveButtonText, { color: colorTheme.textColor }]}>Save</Text>
             </TouchableOpacity>
           </ScrollView>
         </View>

@@ -33,10 +33,10 @@ export default function TodaySection({
   return (
     <View style={styles.section}>
       <View style={[styles.sectionHeader, { overflow: 'visible' }]}>
-        <Text style={styles.sectionTitle}>Today</Text>
+        <Text style={[styles.sectionTitle, { color: colorTheme.textColor }]}>Today</Text>
         <TouchableOpacity 
           style={{
-            backgroundColor: colorTheme.darker, 
+            backgroundColor: colorTheme.darkest, 
             borderColor: colorTheme.darkest,
             paddingHorizontal: 15,
             paddingVertical: 8,
@@ -50,7 +50,7 @@ export default function TodaySection({
           }}
           onPress={onAddTask}
         >
-          <Text style={styles.addButtonText}>Add Task</Text>
+          <Text style={[styles.addButtonText, { color: '#000000' }]}>Add Task</Text>
         </TouchableOpacity>
       </View>
 
@@ -77,8 +77,8 @@ export default function TodaySection({
         {/* Done At Section */}
         {timeFormat === 'schedule' && (
           <View style={styles.doneAtContainer}>
-            <Text style={styles.doneAtLabel}>You will be done at:</Text>
-            <Text style={styles.doneAtTime}>
+            <Text style={[styles.doneAtLabel, { color: colorTheme.textColor }]}>You will be done at:</Text>
+            <Text style={[styles.doneAtTime, { color: colorTheme.textColor }]}>
               {activeTasks.length > 0 ? (() => {
                 const lastTask = activeTasks[activeTasks.length - 1];
                 const [hours, minutes] = lastTask.time.split('.').map(Number);

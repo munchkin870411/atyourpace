@@ -32,7 +32,7 @@ export const modalStyles = StyleSheet.create({
   },
   input: {
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: '#999',
     borderRadius: 8,
     padding: 12,
     fontSize: 16,
@@ -61,7 +61,7 @@ export const modalStyles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: '#999',
     marginTop: 5,
     maxHeight: 200,
   },
@@ -105,7 +105,7 @@ export const modalStyles = StyleSheet.create({
     height: 50,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: '#999',
   },
   colorGrid: {
     flexDirection: 'row',

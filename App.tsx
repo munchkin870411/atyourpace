@@ -322,6 +322,7 @@ export default function App(): React.JSX.Element {
           setEditingTask(null);
         }}
         onAddTask={handleAddTask}
+        onDelete={deleteTask}
         existingTasks={tasks}
         isFirstTask={activeTasks.length === 0}
         section={currentSection}

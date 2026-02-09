@@ -64,11 +64,11 @@ export default function TaskItem({ task, onToggle, onDelete, onEdit, onMoveToSec
         style={styles.taskContent}
         onPress={() => onEdit(task)}
       >
-        <Text style={[styles.taskText, task.completed && styles.taskTextCompleted]}>
+        <Text style={[styles.taskText, { color: colorTheme?.textColor || '#000000' }, task.completed && styles.taskTextCompleted]}>
           {task.text}
         </Text>
-        {showTime && <Text style={styles.taskTime}>{task.time}</Text>}
-        {showDuration && <Text style={styles.taskTime}>{task.duration} min</Text>}
+        {showTime && <Text style={[styles.taskTime, { color: colorTheme?.textColor || '#000000' }]}>{task.time}</Text>}
+        {showDuration && <Text style={[styles.taskTime, { color: colorTheme?.textColor || '#000000' }]}>{task.duration} min</Text>}
       </TouchableOpacity>
       
       {onMoveToSection && (

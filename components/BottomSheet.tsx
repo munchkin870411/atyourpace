@@ -81,12 +81,12 @@ export default function BottomSheet({
         {/* This week Section */}
         <View style={styles.bottomSection}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>This week</Text>
+            <Text style={[styles.sectionTitle, { color: '#000000' }]}>This week</Text>
             <TouchableOpacity 
               style={[
                 styles.addButton, 
                 { 
-                  backgroundColor: colorTheme.darker, 
+                  backgroundColor: colorTheme.darkest, 
                   borderColor: colorTheme.darkest,
                   borderRadius: 12,
                   shadowColor: '#000',
@@ -129,12 +129,12 @@ export default function BottomSheet({
         {/* Other tasks Section */}
         <View style={[styles.bottomSection, { marginBottom: 0 }]}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Other tasks</Text>
+            <Text style={[styles.sectionTitle, { color: '#000000' }]}>Other tasks</Text>
             <TouchableOpacity 
               style={[
                 styles.addButton, 
                 { 
-                  backgroundColor: colorTheme.darker, 
+                  backgroundColor: colorTheme.darkest, 
                   borderColor: colorTheme.darkest,
                   borderRadius: 12,
                   shadowColor: '#000',

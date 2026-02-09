@@ -25,11 +25,11 @@ export default function ProgressSection({ completedTasks, onToggle, onDelete, on
   
   return (
     <View style={styles.section}>
-      <Text style={styles.sectionTitle}>Check your progress!</Text>
+      <Text style={[styles.sectionTitle, { color: colorTheme.textColor }]}>Check your progress!</Text>
       
       <View style={[styles.progressContainer, { backgroundColor: colorTheme.lightest, borderColor: colorTheme.dark }]}>
         {completedTasks.length === 0 ? (
-          <Text style={styles.emptyText}>No completed tasks yet</Text>
+          <Text style={[styles.emptyText, { color: colorTheme.textColor }]}>No completed tasks yet</Text>
         ) : (
           <>
             {completedTasks.map(task => (
@@ -46,8 +46,8 @@ export default function ProgressSection({ completedTasks, onToggle, onDelete, on
               />
             ))}
             <View style={styles.totalTimeContainer}>
-              <Text style={styles.totalTimeLabel}>Total time:</Text>
-              <Text style={styles.totalTimeValue}>{totalTimeText}</Text>
+              <Text style={[styles.totalTimeLabel, { color: colorTheme.textColor }]}>Total time:</Text>
+              <Text style={[styles.totalTimeValue, { color: colorTheme.textColor }]}>{totalTimeText}</Text>
             </View>
           </>
         )}

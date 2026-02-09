@@ -6,6 +6,7 @@ export interface ColorTheme {
   dark: string;          // Darker for borders
   darker: string;        // Even darker for emphasis
   darkest: string;       // Darkest for important buttons
+  textColor: string;     // Text color (white in dark mode, black in light mode)
 }
 
 // Convert hex to RGB
@@ -61,16 +62,34 @@ export const addAlpha = (hex: string, alpha: number): string => {
 
 // Generate a complete color theme from a base color
 export const generateColorTheme = (baseColor: string): ColorTheme => {
-  // Make the base color lighter
-  const adjustedBase = lighten(baseColor, 15);
+  // Check if this is the dark mode color
+  const isDarkMode = baseColor.toUpperCase() === '#909090';
   
-  return {
-    primary: adjustedBase,
-    light: lighten(adjustedBase, 35),
-    lighter: lighten(adjustedBase, 60),
-    lightest: mixWithWhite(adjustedBase, 85),
-    dark: darken(adjustedBase, 8),
-    darker: darken(adjustedBase, 15),
-    darkest: darken(adjustedBase, 25),
-  };
+  if (isDarkMode) {
+    // Dark mode theme with darker backgrounds and white text
+    return {
+      primary: '#505050',
+      light: '#2C2C2C',           // Dark background
+      lighter: '#252525',         // Darker for containers
+      lightest: '#1E1E1E',        // Darkest background
+      dark: '#707070',            // Lighter borders in dark mode
+      darker: '#808080',          // Lighter emphasis
+      darkest: '#484848',         // Darker buttons
+      textColor: '#B0B0B0',       // Light gray text in dark mode
+    };
+  } else {
+    // Light mode: create lighter variants (original behavior)
+    const adjustedBase = lighten(baseColor, 15);
+    
+    return {
+      primary: adjustedBase,
+      light: lighten(adjustedBase, 35),
+      lighter: lighten(adjustedBase, 60),
+      lightest: mixWithWhite(adjustedBase, 85),
+      dark: darken(adjustedBase, 8),
+      darker: darken(adjustedBase, 15),
+      darkest: darken(adjustedBase, 25),
+      textColor: '#000000',       // Black text in light mode
+    };
+  }
 };
