@@ -106,7 +106,7 @@ export default function AddTaskModal({
         duration: parseInt(duration),
         color: color,
         section: section,
-        isSavedTemplate: true,
+        saveAsTemplate: true, // Detta skapar både vanlig task och template
       });
       // Reset form
       setTaskText('');

@@ -145,10 +145,10 @@ export default function App(): React.JSX.Element {
     }
   };
 
-  const activeTasks = tasks.filter(task => !task.completed && task.section === 'today');
+  const activeTasks = tasks.filter(task => !task.completed && task.section === 'today' && !task.isSavedTemplate);
   const completedTasks = tasks.filter(task => task.completed);
-  const thisWeekTasks = tasks.filter(task => !task.completed && task.section === 'thisWeek');
-  const otherTasks = tasks.filter(task => !task.completed && task.section === 'other');
+  const thisWeekTasks = tasks.filter(task => !task.completed && task.section === 'thisWeek' && !task.isSavedTemplate);
+  const otherTasks = tasks.filter(task => !task.completed && task.section === 'other' && !task.isSavedTemplate);
 
   // Ladda tasks från AsyncStorage när appen startar
   useEffect(() => {
@@ -190,7 +190,7 @@ export default function App(): React.JSX.Element {
         const hasBadTime = parsedTasks.some((task: Task) => task.section === 'today' && task.time === '09.00');
         if (hasBadTime) {
           console.log('🔧 Migration: Rensar today-tasks med 09.00');
-          parsedTasks = parsedTasks.filter((task: Task) => task.section !== 'today');
+          parsedTasks = parsedTasks.filter((task: Task) => task.section !== 'today' || task.isSavedTemplate);
           await AsyncStorage.setItem('tasks', JSON.stringify(parsedTasks));
           await AsyncStorage.removeItem('dayStartTime');
           setDayStartTime('');
@@ -198,9 +198,9 @@ export default function App(): React.JSX.Element {
           return;
         }
         
-        // Om det är en ny dag, ta bort alla tasks från "today" sektionen
+        // Om det är en ny dag, ta bort alla tasks från "today" sektionen (men behåll templates)
         if (shouldClearToday) {
-          parsedTasks = parsedTasks.filter((task: Task) => task.section !== 'today');
+          parsedTasks = parsedTasks.filter((task: Task) => task.section !== 'today' || task.isSavedTemplate);
           await AsyncStorage.setItem('tasks', JSON.stringify(parsedTasks));
           await AsyncStorage.setItem('lastClearedDate', today);
           await AsyncStorage.removeItem('dayStartTime');

@@ -13,41 +13,46 @@ export const toggleTask = (
   let updatedTasks = [...tasks];
   
   if (!task.completed) {
-    // Checka av - spara tiden
-    updatedTasks[taskIndex] = { ...task, completed: true, completedAt: currentTime };
-    
     // Bara räkna om om det är en today task
     if (task.section !== 'today') {
+      updatedTasks[taskIndex] = { ...task, completed: true, completedAt: currentTime };
       return updatedTasks;
     }
     
-    // Beräkna om nästa aktiva today tasks
-    const todayTasks = updatedTasks.filter(t => t.section === 'today' && !t.completed);
-    const taskPositionInToday = todayTasks.findIndex(t => t.id === id);
+    // Hitta alla today tasks INNAN vi markerar som completed
+    const allTodayTasks = tasks.filter(t => t.section === 'today');
+    const taskPositionInToday = allTodayTasks.findIndex(t => t.id === id);
     
-    // Om det finns tasks efter denna i today
-    if (taskPositionInToday !== -1 && taskPositionInToday < todayTasks.length - 1) {
-      // Räkna om alla tasks efter denna
-      for (let i = taskPositionInToday; i < todayTasks.length; i++) {
-        const currentTask = todayTasks[i];
-        let startTime: string;
-        
-        if (i === taskPositionInToday) {
-          // Första efter completed task - använd currentTime
-          startTime = currentTime;
-        } else {
-          // Beräkna från föregående task
-          const prevTask = todayTasks[i - 1];
-          const prevTaskIdx = updatedTasks.findIndex(t => t.id === prevTask.id);
-          const prevTaskData = updatedTasks[prevTaskIdx];
-          const [h, m] = prevTaskData.time.split('.').map(Number);
-          const totalMin = h * 60 + m + prevTaskData.duration;
-          startTime = `${String(Math.floor(totalMin / 60)).padStart(2, '0')}.${String(totalMin % 60).padStart(2, '0')}`;
-        }
-        
-        const currentTaskIdx = updatedTasks.findIndex(t => t.id === currentTask.id);
-        updatedTasks[currentTaskIdx] = { ...updatedTasks[currentTaskIdx], time: startTime };
-      }
+    // Beräkna planerad sluttid för denna task
+    const [taskStartHours, taskStartMinutes] = task.time.split('.').map(Number);
+    const plannedEndMinutes = taskStartHours * 60 + taskStartMinutes + task.duration;
+    
+    // Beräkna faktisk sluttid (när användaren checkade av)
+    const [actualHours, actualMinutes] = currentTime.split('.').map(Number);
+    const actualEndMinutes = actualHours * 60 + actualMinutes;
+    
+    // Beräkna tidsskillnad (positiv = försenad, negativ = tidig)
+    const timeDifference = actualEndMinutes - plannedEndMinutes;
+    
+    // Checka av - spara tiden
+    updatedTasks[taskIndex] = { ...task, completed: true, completedAt: currentTime };
+    
+    // Justera alla tasks efter denna som inte är completed
+    for (let i = taskPositionInToday + 1; i < allTodayTasks.length; i++) {
+      const nextTask = allTodayTasks[i];
+      const nextTaskIdx = updatedTasks.findIndex(t => t.id === nextTask.id);
+      const nextTaskData = updatedTasks[nextTaskIdx];
+      
+      // Skippa om denna task redan är completed
+      if (nextTaskData.completed) continue;
+      
+      // Justera tiden med tidsskillnaden
+      const [h, m] = nextTaskData.time.split('.').map(Number);
+      const currentTaskMinutes = h * 60 + m;
+      const newTaskMinutes = currentTaskMinutes + timeDifference;
+      
+      const newStartTime = `${String(Math.floor(newTaskMinutes / 60)).padStart(2, '0')}.${String(newTaskMinutes % 60).padStart(2, '0')}`;
+      updatedTasks[nextTaskIdx] = { ...nextTaskData, time: newStartTime };
     }
   } else {
     // Bocka av igen - omberäkna från denna task
@@ -111,8 +116,20 @@ export const addTask = (
   let calculatedTime = newTaskData.time;
   let newStartTime: string | null = null;
   
-  // Hitta tasks i samma sektion
-  const sectionTasks = tasks.filter(t => t.section === newTaskData.section && !t.completed);
+  // Om det är en saved template, ge den en dummy-tid och lägg till direkt
+  if (newTaskData.isSavedTemplate) {
+    const maxId = tasks.length > 0 ? Math.max(...tasks.map(t => t.id)) : 0;
+    const newTask: Task = {
+      id: maxId + 1,
+      ...newTaskData,
+      time: '00.00', // Dummy tid för templates
+      completed: false,
+    };
+    return { updatedTasks: [...tasks, newTask], newStartTime: null };
+  }
+  
+  // Hitta tasks i samma sektion (exkludera saved templates)
+  const sectionTasks = tasks.filter(t => t.section === newTaskData.section && !t.completed && !t.isSavedTemplate);
   
   // Om det inte är första tasken i sektionen, beräkna tid baserat på föregående tasks
   if (sectionTasks.length > 0) {
@@ -141,9 +158,27 @@ export const addTask = (
     ...newTaskData,
     time: calculatedTime,
     completed: false,
+    saveAsTemplate: undefined, // Ta bort denna flag från den vanliga tasken
   };
   
-  return { updatedTasks: [...tasks, newTask], newStartTime };
+  let updatedTasks = [...tasks, newTask];
+  
+  // Om saveAsTemplate är true, skapa också en template-version
+  if (newTaskData.saveAsTemplate) {
+    const templateTask: Task = {
+      id: maxId + 2,
+      text: newTaskData.text,
+      time: '00.00', // Dummy tid för templates
+      duration: newTaskData.duration,
+      color: newTaskData.color,
+      section: newTaskData.section,
+      completed: false,
+      isSavedTemplate: true,
+    };
+    updatedTasks = [...updatedTasks, templateTask];
+  }
+  
+  return { updatedTasks, newStartTime };
 };
 
 export const deleteTask = (

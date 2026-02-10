@@ -8,4 +8,5 @@ export interface Task {
   completedAt?: string;
   section: 'today' | 'thisWeek' | 'other';
   isSavedTemplate?: boolean;
+  saveAsTemplate?: boolean; // Flag to also save as template
 }
