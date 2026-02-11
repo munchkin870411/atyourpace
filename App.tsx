@@ -24,7 +24,8 @@ export default function App(): React.JSX.Element {
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [dayStartTime, setDayStartTime] = useState<string>('');
   const [timeFormat, setTimeFormat] = useState<'schedule' | 'minutes' | 'notime'>('schedule');
-  const [selectedAvatar, setSelectedAvatar] = useState<string>('�');  const [selectedColor, setSelectedColor] = useState<string>('#99E699');
+  const [selectedAvatar, setSelectedAvatar] = useState<string>('👤');
+  const [selectedColor, setSelectedColor] = useState<string>('#99E699');
   const colorTheme = useMemo(() => generateColorTheme(selectedColor), [selectedColor]);
 
   const translateY = useRef(new Animated.Value(0)).current;
@@ -226,7 +227,7 @@ export default function App(): React.JSX.Element {
           id: 1, 
           text: 'Add your first task!', 
           time: currentTime, 
-          duration: 30, 
+          duration: 1, 
           color: '#000000', 
           completed: false,
           section: 'today'

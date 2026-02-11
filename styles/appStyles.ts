@@ -151,6 +151,7 @@ export const appStyles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 5,
+    paddingBottom: 30,
   },
   bottomSheetHandle: {
     alignItems: 'center',
