@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Task } from '../types';
 import TaskItem from './TaskItem';
-import { appStyles as styles } from '../styles/appStyles';
+import { todaySectionStyles as styles } from '../styles/todaySectionStyles';
 import { ColorTheme } from '../utils/colorUtils';
 
 interface TodaySectionProps {

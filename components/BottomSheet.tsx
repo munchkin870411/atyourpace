@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, ScrollView, Animated, PanResponder } from
 import { LinearGradient } from 'expo-linear-gradient';
 import { Task } from '../types';
 import TaskItem from './TaskItem';
-import { appStyles as styles } from '../styles/appStyles';
+import { bottomSheetStyles as styles } from '../styles/bottomSheetStyles';
 import { ColorTheme } from '../utils/colorUtils';
 
 interface BottomSheetProps {

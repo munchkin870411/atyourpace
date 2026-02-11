@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text } from 'react-native';
 import { Task } from '../types';
 import TaskItem from './TaskItem';
-import { appStyles as styles } from '../styles/appStyles';
+import { progressSectionStyles as styles } from '../styles/progressSectionStyles';
 import { ColorTheme } from '../utils/colorUtils';
 
 interface ProgressSectionProps {
