@@ -52,7 +52,8 @@ export default function App(): React.JSX.Element {
     handleEditTask,
     moveTaskToSectionHandler,
     moveTaskUp,
-    moveTaskDown
+    moveTaskDown,
+    recalibrateSchedule
   } = useTaskHandlers({
     tasks,
     setTasks,
@@ -91,6 +92,7 @@ export default function App(): React.JSX.Element {
             setCurrentSection('today');
             setModalVisible(true);
           }}
+          onRecalibrate={recalibrateSchedule}
           timeFormat={timeFormat}
           colorTheme={colorTheme}
         />

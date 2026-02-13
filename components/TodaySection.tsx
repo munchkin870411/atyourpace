@@ -14,6 +14,7 @@ interface TodaySectionProps {
   onMoveUp: (id: number) => void;
   onMoveDown: (id: number) => void;
   onAddTask: () => void;
+  onRecalibrate: () => void;
   timeFormat: 'schedule' | 'minutes' | 'notime';
   colorTheme: ColorTheme;
 }
@@ -27,13 +28,22 @@ export default function TodaySection({
   onMoveUp,
   onMoveDown,
   onAddTask,
+  onRecalibrate,
   timeFormat,
   colorTheme
 }: TodaySectionProps) {
   return (
     <View style={styles.section}>
       <View style={[styles.sectionHeader, { overflow: 'visible' }]}>
-        <Text style={[styles.sectionTitle, { color: colorTheme.textColor }]}>Today</Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <Text style={[styles.sectionTitle, { color: colorTheme.textColor }]}>Today</Text>
+          <TouchableOpacity 
+            style={styles.recalibrateButton}
+            onPress={onRecalibrate}
+          >
+            <Text style={[styles.recalibrateIcon, { color: colorTheme.primary }]}>↻</Text>
+          </TouchableOpacity>
+        </View>
         <TouchableOpacity 
           style={{
             backgroundColor: colorTheme.darkest, 

@@ -95,7 +95,7 @@ export default function ProfileModal({ visible, onClose, onTimeFormatChange, sel
           <View style={[styles.header, { backgroundColor: colorTheme.darker }]}>
             <Text style={[styles.headerTitle, styles.headerTitleBlack]}>Edit your profile</Text>
             <TouchableOpacity style={[styles.avatarButton, styles.avatarButtonTransparent]} onPress={handleClose}>
-              <Text style={[styles.avatarButtonText, styles.avatarButtonTextLarge]}>{localAvatar}</Text>
+              <Text style={[styles.avatarButtonText, styles.avatarButtonTextLarge]}>×</Text>
             </TouchableOpacity>
           </View>
 

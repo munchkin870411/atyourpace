@@ -142,7 +142,8 @@ export const profileModalStyles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   avatarButtonTextLarge: {
-    fontSize: 26,
+    fontSize: 28,
+    fontWeight: 'bold',
   },
   scrollContentPadding: {
     padding: 17,

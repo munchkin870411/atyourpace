@@ -112,6 +112,14 @@ export const useTaskHandlers = ({
     }
   };
 
+  const recalibrateSchedule = () => {
+    const { updatedTasks, newStartTime } = taskHelpers.recalibrateSchedule(tasks);
+    setTasks(updatedTasks);
+    saveTasks(updatedTasks);
+    setDayStartTime(newStartTime);
+    AsyncStorage.setItem('dayStartTime', newStartTime);
+  };
+
   return {
     activeTasks,
     completedTasks,
@@ -127,6 +135,7 @@ export const useTaskHandlers = ({
     handleEditTask,
     moveTaskToSectionHandler,
     moveTaskUp,
-    moveTaskDown
+    moveTaskDown,
+    recalibrateSchedule
   };
 };

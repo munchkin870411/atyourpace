@@ -14,6 +14,13 @@ export const todaySectionStyles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
   },
+  recalibrateButton: {
+    marginLeft: 10,
+    padding: 6,
+  },
+  recalibrateIcon: {
+    fontSize: 24,
+  },
   addButton: {
     backgroundColor: '#278a2a98',
     paddingHorizontal: 15,

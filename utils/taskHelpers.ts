@@ -382,3 +382,27 @@ export const moveTaskDown = (
 ): { updatedTasks: Task[], newStartTime: string } => {
   return moveTaskInternal(tasks, taskId, 'down', dayStartTime);
 };
+
+export const recalibrateSchedule = (
+  tasks: Task[]
+): { updatedTasks: Task[], newStartTime: string } => {
+  const currentTime = getCurrentTime();
+  const todayTasks = tasks.filter(t => t.section === 'today' && !t.completed && !t.isSavedTemplate);
+  
+  if (todayTasks.length === 0) {
+    return { updatedTasks: tasks, newStartTime: currentTime };
+  }
+  
+  let updatedTasks = [...tasks];
+  
+  // Sätt första taskens tid till nuvarande tid
+  const firstTaskIdx = updatedTasks.findIndex(t => t.id === todayTasks[0].id);
+  updatedTasks[firstTaskIdx] = { ...updatedTasks[firstTaskIdx], time: currentTime };
+  
+  // Räkna om alla efterföljande tasks
+  if (todayTasks.length > 1) {
+    updatedTasks = recalculateScheduleFromIndex(updatedTasks, todayTasks, 1);
+  }
+  
+  return { updatedTasks, newStartTime: currentTime };
+};
