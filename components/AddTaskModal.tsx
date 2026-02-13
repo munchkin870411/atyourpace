@@ -48,10 +48,12 @@ export default function AddTaskModal({
       setTaskText(editingTask.text);
       setDuration(editingTask.duration.toString());
       setColor(editingTask.color);
+      setStartTime(editingTask.time || '');
     } else {
       setTaskText('');
       setDuration('');
       setColor('#000000');
+      setStartTime('');
     }
   }, [editingTask]);
 
@@ -234,7 +236,7 @@ export default function AddTaskModal({
               ))}
             </View>
 
-            {isFirstTask && (
+            {(isFirstTask || (editingTask && editingTask.section === 'today')) && (
               <>
                 <Text style={[styles.inputLabel, { color: colorTheme.textColor }]}>Pick a starting time?</Text>
                 <View style={styles.startTimeContainer}>

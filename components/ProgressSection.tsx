@@ -12,9 +12,10 @@ interface ProgressSectionProps {
   onEdit: (task: Task) => void;
   onMoveToSection: (id: number, section: 'today' | 'thisWeek' | 'other') => void;
   colorTheme: ColorTheme;
+  timeFormat: 'schedule' | 'minutes' | 'notime';
 }
 
-export default function ProgressSection({ completedTasks, onToggle, onDelete, onEdit, onMoveToSection, colorTheme }: ProgressSectionProps) {
+export default function ProgressSection({ completedTasks, onToggle, onDelete, onEdit, onMoveToSection, colorTheme, timeFormat }: ProgressSectionProps) {
   // Räkna ut total tid
   const totalMinutes = completedTasks.reduce((sum, task) => sum + task.duration, 0);
   const hours = Math.floor(totalMinutes / 60);
@@ -41,14 +42,16 @@ export default function ProgressSection({ completedTasks, onToggle, onDelete, on
                 onEdit={onEdit} 
                 onMoveToSection={onMoveToSection}
                 showTime={false}
-                showDuration={true}
+                showDuration={timeFormat !== 'notime'}
                 colorTheme={colorTheme}
               />
             ))}
-            <View style={styles.totalTimeContainer}>
-              <Text style={[styles.totalTimeLabel, { color: colorTheme.textColor }]}>Total time:</Text>
-              <Text style={[styles.totalTimeValue, { color: colorTheme.textColor }]}>{totalTimeText}</Text>
-            </View>
+            {timeFormat !== 'notime' && (
+              <View style={styles.totalTimeContainer}>
+                <Text style={[styles.totalTimeLabel, { color: colorTheme.textColor }]}>Total time:</Text>
+                <Text style={[styles.totalTimeValue, { color: colorTheme.textColor }]}>{totalTimeText}</Text>
+              </View>
+            )}
           </>
         )}
       </View>

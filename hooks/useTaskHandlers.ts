@@ -57,9 +57,15 @@ export const useTaskHandlers = ({
 
   const handleAddTask = (newTaskData: Omit<Task, 'id' | 'completed'>) => {
     if (editingTask) {
-      const updatedTasks = taskHelpers.editTask(tasks, editingTask, newTaskData);
+      const { updatedTasks, newStartTime } = taskHelpers.editTask(tasks, editingTask, newTaskData, dayStartTime);
       setTasks(updatedTasks);
       saveTasks(updatedTasks);
+      
+      if (newStartTime) {
+        setDayStartTime(newStartTime);
+        AsyncStorage.setItem('dayStartTime', newStartTime);
+      }
+      
       setEditingTask(null);
     } else {
       const { updatedTasks, newStartTime } = taskHelpers.addTask(tasks, newTaskData, activeTasks);

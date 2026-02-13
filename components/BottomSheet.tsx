@@ -22,6 +22,7 @@ interface BottomSheetProps {
   onAddThisWeekTask: () => void;
   onAddOtherTask: () => void;
   colorTheme: ColorTheme;
+  timeFormat: 'schedule' | 'minutes' | 'notime';
 }
 
 export default function BottomSheet({ 
@@ -39,7 +40,8 @@ export default function BottomSheet({
   onMoveDown,
   onAddThisWeekTask,
   onAddOtherTask,
-  colorTheme
+  colorTheme,
+  timeFormat
 }: BottomSheetProps) {
   if (!isExpanded) {
     return (
@@ -118,7 +120,8 @@ export default function BottomSheet({
                   onMoveDown={onMoveDown}
                   isFirst={index === 0}
                   isLast={index === thisWeekTasks.length - 1}
-                  showTime={false} 
+                  showTime={false}
+                  showDuration={timeFormat !== 'notime'}
                   colorTheme={colorTheme}
                 />
               ))
@@ -166,7 +169,8 @@ export default function BottomSheet({
                   onMoveDown={onMoveDown}
                   isFirst={index === 0}
                   isLast={index === otherTasks.length - 1}
-                  showTime={false} 
+                  showTime={false}
+                  showDuration={timeFormat !== 'notime'}
                   colorTheme={colorTheme}
                 />
               ))

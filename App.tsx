@@ -102,6 +102,7 @@ export default function App(): React.JSX.Element {
           onEdit={handleEditTask}
           onMoveToSection={moveTaskToSectionHandler}
           colorTheme={colorTheme}
+          timeFormat={timeFormat}
         />
       </ScrollView>
 
@@ -127,6 +128,7 @@ export default function App(): React.JSX.Element {
           setModalVisible(true);
         }}
         colorTheme={colorTheme}
+        timeFormat={timeFormat}
       />
 
       <AddTaskModal 

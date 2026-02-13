@@ -74,19 +74,34 @@ export default function TodaySection({
           />
         ))}
 
-        {/* Done At Section */}
-        {timeFormat === 'schedule' && (
+        {/* Done At Section - Schedule Mode */}
+        {timeFormat === 'schedule' && activeTasks.length > 0 && (
           <View style={styles.doneAtContainer}>
             <Text style={[styles.doneAtLabel, { color: colorTheme.textColor }]}>You will be done at:</Text>
             <Text style={[styles.doneAtTime, { color: colorTheme.textColor }]}>
-              {activeTasks.length > 0 ? (() => {
+              {(() => {
                 const lastTask = activeTasks[activeTasks.length - 1];
                 const [hours, minutes] = lastTask.time.split('.').map(Number);
                 const totalMinutes = hours * 60 + minutes + lastTask.duration;
                 const doneHours = Math.floor(totalMinutes / 60);
                 const doneMinutes = totalMinutes % 60;
                 return `${String(doneHours).padStart(2, '0')}.${String(doneMinutes).padStart(2, '0')}`;
-              })() : '00.00'}
+              })()}
+            </Text>
+          </View>
+        )}
+
+        {/* Total Time Section - Minutes Mode */}
+        {timeFormat === 'minutes' && activeTasks.length > 0 && (
+          <View style={styles.doneAtContainer}>
+            <Text style={[styles.doneAtLabel, { color: colorTheme.textColor }]}>Total time:</Text>
+            <Text style={[styles.doneAtTime, { color: colorTheme.textColor }]}>
+              {(() => {
+                const totalMinutes = activeTasks.reduce((sum, task) => sum + task.duration, 0);
+                const hours = Math.floor(totalMinutes / 60);
+                const minutes = totalMinutes % 60;
+                return hours > 0 ? `${hours} h ${minutes} minutes` : `${minutes} minutes`;
+              })()}
             </Text>
           </View>
         )}
