@@ -46,12 +46,12 @@ export default function BottomSheet({
   if (!isExpanded) {
     return (
       <View 
-        style={[styles.bottomSheetToggle, { borderTopColor: colorTheme.dark, overflow: 'hidden' }]}
+        style={[styles.bottomSheetToggle, styles.bottomSheetWithOverflow, { borderTopColor: colorTheme.dark }]}
         {...panResponder.panHandlers}
       >
         <LinearGradient
           colors={[colorTheme.dark, colorTheme.lighter]}
-          style={{ position: 'absolute', left: 0, right: 0, top: 0, bottom: 0 }}
+          style={styles.gradientOverlay}
           pointerEvents="none"
         />
         <View style={[styles.dragHandle, { backgroundColor: colorTheme.darkest }]} />
@@ -63,13 +63,14 @@ export default function BottomSheet({
     <Animated.View 
       style={[
         styles.bottomSheet,
-        { borderTopColor: colorTheme.dark, overflow: 'hidden' },
+        styles.bottomSheetWithOverflow,
+        { borderTopColor: colorTheme.dark },
         { transform: [{ translateY: Animated.add(translateY, slideAnim) }] }
       ]}
     >
       <LinearGradient
         colors={[colorTheme.dark, colorTheme.lighter]}
-        style={{ position: 'absolute', left: 0, right: 0, top: 0, bottom: 0 }}
+        style={styles.gradientOverlay}
         pointerEvents="none"
       />
       <View {...panResponder.panHandlers} style={styles.bottomSheetHandle}>
@@ -77,25 +78,20 @@ export default function BottomSheet({
       </View>
       <ScrollView 
         showsVerticalScrollIndicator={false} 
-        contentContainerStyle={{ paddingBottom: 20 }}
-        style={{ backgroundColor: 'transparent' }}
+        contentContainerStyle={styles.scrollViewContent}
+        style={styles.scrollView}
       >
         {/* This week Section */}
         <View style={styles.bottomSection}>
           <View style={styles.sectionHeader}>
-            <Text style={[styles.sectionTitle, { color: '#000000' }]}>This week</Text>
+            <Text style={[styles.sectionTitle, styles.sectionTitleBlack]}>This week</Text>
             <TouchableOpacity 
               style={[
-                styles.addButton, 
+                styles.addButton,
+                styles.addButtonWithShadow,
                 { 
                   backgroundColor: colorTheme.darkest, 
                   borderColor: colorTheme.darkest,
-                  borderRadius: 12,
-                  shadowColor: '#000',
-                  shadowOffset: { width: 0, height: 3 },
-                  shadowOpacity: 0.3,
-                  shadowRadius: 4,
-                  elevation: 5
                 }
               ]}
               onPress={onAddThisWeekTask}
@@ -130,21 +126,16 @@ export default function BottomSheet({
         </View>
 
         {/* Other tasks Section */}
-        <View style={[styles.bottomSection, { marginBottom: 0 }]}>
+        <View style={[styles.bottomSection, styles.bottomSectionLast]}>
           <View style={styles.sectionHeader}>
-            <Text style={[styles.sectionTitle, { color: '#000000' }]}>Other tasks</Text>
+            <Text style={[styles.sectionTitle, styles.sectionTitleBlack]}>Other tasks</Text>
             <TouchableOpacity 
               style={[
-                styles.addButton, 
+                styles.addButton,
+                styles.addButtonWithShadow,
                 { 
                   backgroundColor: colorTheme.darkest, 
                   borderColor: colorTheme.darkest,
-                  borderRadius: 12,
-                  shadowColor: '#000',
-                  shadowOffset: { width: 0, height: 3 },
-                  shadowOpacity: 0.3,
-                  shadowRadius: 4,
-                  elevation: 5
                 }
               ]}
               onPress={onAddOtherTask}

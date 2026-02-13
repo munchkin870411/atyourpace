@@ -138,29 +138,22 @@ export default function AddTaskModal({
       onRequestClose={onClose}
     >
       <View style={[styles.modalOverlay, { backgroundColor: addAlpha(colorTheme.primary, 0.8) }]}>
-        <View style={[styles.modalContent, { backgroundColor: 'transparent', borderColor: colorTheme.dark, padding: 0, overflow: 'hidden' }]}>
+        <View style={[styles.modalContent, styles.modalContentTransparent, { borderColor: colorTheme.dark }]}>
           <LinearGradient
             colors={[colorTheme.light, colorTheme.lightest]}
-            style={{ position: 'absolute', left: 0, right: 0, top: 0, bottom: 0 }}
+            style={styles.gradientOverlay}
             pointerEvents="none"
           />
-          <View style={{ 
-            backgroundColor: colorTheme.darker, 
-            flexDirection: 'row', 
-            justifyContent: 'space-between', 
-            alignItems: 'center', 
-            paddingHorizontal: 20, 
-            paddingVertical: 15 
-          }}>
-            <Text style={{ fontSize: 22, fontWeight: '600', color: '#000000' }}>
+          <View style={[styles.modalHeader, { backgroundColor: colorTheme.darker }]}>
+            <Text style={styles.modalHeaderTitle}>
               {editingTask ? 'Edit task' : 'Add a task'}
             </Text>
             <TouchableOpacity onPress={onClose}>
-              <Text style={{ fontSize: 28, color: '#000000', fontWeight: 'bold' }}>×</Text>
+              <Text style={styles.modalCloseButton}>×</Text>
             </TouchableOpacity>
           </View>
           
-          <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: 25 }}>
+          <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollViewContent}>
             <Text style={[styles.inputLabel, { color: colorTheme.textColor }]}>What do you need to do? *</Text>
             <TextInput
               style={[styles.input, { backgroundColor: colorTheme.lightest, color: colorTheme.textColor }]}
@@ -179,12 +172,12 @@ export default function AddTaskModal({
             </TouchableOpacity>
 
             {dropdownVisible && (
-              <View style={[styles.dropdownList, { maxHeight: 200 }]}>
+              <View style={[styles.dropdownList, styles.dropdownListExpanded]}>
                 <ScrollView nestedScrollEnabled={true} showsVerticalScrollIndicator={true}>
                   {uniqueTaskTemplates.map((task) => (
                     <View key={task.id} style={styles.dropdownItem}>
                       <TouchableOpacity
-                        style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}
+                        style={styles.dropdownItemTouchable}
                         onPress={() => selectExistingTask(task)}
                       >
                         <View
@@ -197,9 +190,9 @@ export default function AddTaskModal({
                       </TouchableOpacity>
                       <TouchableOpacity
                         onPress={() => onDelete(task.id)}
-                        style={{ paddingLeft: 10 }}
+                        style={styles.deleteButton}
                       >
-                        <Text style={{ fontSize: 18, color: '#DC143C', fontWeight: 'bold' }}>×</Text>
+                        <Text style={styles.deleteButtonText}>×</Text>
                       </TouchableOpacity>
                     </View>
                   ))}
@@ -270,16 +263,11 @@ export default function AddTaskModal({
             <View style={styles.modalButtons}>
               <TouchableOpacity 
                 style={[
-                  styles.cancelButton, 
+                  styles.cancelButton,
+                  styles.buttonWithShadow,
                   { 
                     backgroundColor: colorTheme.dark, 
                     borderColor: colorTheme.darker,
-                    borderRadius: 12,
-                    shadowColor: '#000',
-                    shadowOffset: { width: 0, height: 3 },
-                    shadowOpacity: 0.3,
-                    shadowRadius: 4,
-                    elevation: 5
                   }
                 ]} 
                 onPress={handleSaveTask}
@@ -289,16 +277,11 @@ export default function AddTaskModal({
 
               <TouchableOpacity 
                 style={[
-                  styles.addTaskButton, 
+                  styles.addTaskButton,
+                  styles.buttonWithShadow,
                   { 
                     backgroundColor: colorTheme.darkest, 
                     borderColor: colorTheme.darker,
-                    borderRadius: 12,
-                    shadowColor: '#000',
-                    shadowOffset: { width: 0, height: 3 },
-                    shadowOpacity: 0.3,
-                    shadowRadius: 4,
-                    elevation: 5
                   }
                 ]} 
                 onPress={handleAddTask}

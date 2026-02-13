@@ -195,4 +195,60 @@ export const modalStyles = StyleSheet.create({
     fontWeight: '600',
     color: '#fff',
   },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+  },
+  modalHeaderTitle: {
+    fontSize: 22,
+    fontWeight: '600',
+    color: '#000000',
+  },
+  modalCloseButton: {
+    fontSize: 28,
+    color: '#000000',
+    fontWeight: 'bold',
+  },
+  scrollViewContent: {
+    padding: 25,
+  },
+  dropdownListExpanded: {
+    maxHeight: 200,
+  },
+  dropdownItemTouchable: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  deleteButton: {
+    paddingLeft: 10,
+  },
+  deleteButtonText: {
+    fontSize: 18,
+    color: '#DC143C',
+    fontWeight: 'bold',
+  },
+  buttonWithShadow: {
+    borderRadius: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  modalContentTransparent: {
+    backgroundColor: 'transparent',
+    padding: 0,
+    overflow: 'hidden',
+  },
+  gradientOverlay: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+  },
 });

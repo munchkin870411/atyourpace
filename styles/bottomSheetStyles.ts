@@ -86,4 +86,34 @@ export const bottomSheetStyles = StyleSheet.create({
     textAlign: 'center',
     paddingVertical: 20,
   },
+  bottomSheetWithOverflow: {
+    overflow: 'hidden',
+  },
+  gradientOverlay: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+  },
+  scrollViewContent: {
+    paddingBottom: 20,
+  },
+  scrollView: {
+    backgroundColor: 'transparent',
+  },
+  sectionTitleBlack: {
+    color: '#000000',
+  },
+  addButtonWithShadow: {
+    borderRadius: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  bottomSectionLast: {
+    marginBottom: 0,
+  },
 });

@@ -124,4 +124,73 @@ export const profileModalStyles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
+  modalContainerTransparent: {
+    backgroundColor: 'transparent',
+    overflow: 'hidden',
+  },
+  gradientOverlay: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+  },
+  headerTitleBlack: {
+    color: '#000000',
+  },
+  avatarButtonTransparent: {
+    backgroundColor: 'transparent',
+  },
+  avatarButtonTextLarge: {
+    fontSize: 26,
+  },
+  scrollContentPadding: {
+    padding: 17,
+  },
+  sectionSpacing: {
+    marginBottom: 25,
+  },
+  sectionSpacingSmall: {
+    marginBottom: 18,
+  },
+  sectionTitleCustom: {
+    fontSize: 17,
+    marginBottom: 10,
+  },
+  avatarGridGap: {
+    gap: 8,
+  },
+  avatarCircleSmall: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+  },
+  avatarTextMedium: {
+    fontSize: 22,
+  },
+  colorGridGap: {
+    gap: 12,
+  },
+  colorCircleLarge: {
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+  },
+  timeFormatContainerGap: {
+    gap: 8,
+  },
+  timeFormatButtonPadding: {
+    paddingVertical: 11,
+  },
+  timeFormatTextBlack: {
+    color: '#000000',
+  },
+  saveButtonWithShadow: {
+    borderRadius: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 5,
+  },
 });
