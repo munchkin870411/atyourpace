@@ -54,7 +54,11 @@ export default function BottomSheet({
           style={styles.gradientOverlay}
           pointerEvents="none"
         />
-        <View style={[styles.dragHandle, { backgroundColor: colorTheme.darkest }]} />
+        <View style={styles.lightSection} />
+        <View style={[styles.topLine, { backgroundColor: colorTheme.darkest }]} />
+        <View style={[styles.secondLine, { backgroundColor: colorTheme.darkest }]} />
+        <Text style={[styles.dragArrow, { color: colorTheme.darkest }]}>⌃</Text>
+        <View style={[styles.bottomLine, { backgroundColor: colorTheme.darkest }]} />
       </View>
     );
   }
@@ -74,7 +78,9 @@ export default function BottomSheet({
         pointerEvents="none"
       />
       <View {...panResponder.panHandlers} style={styles.bottomSheetHandle}>
-        <View style={[styles.dragHandle, { backgroundColor: colorTheme.darkest }]} />
+        <View style={[styles.topLine, { backgroundColor: colorTheme.darkest }]} />
+        <View style={[styles.secondLine, { backgroundColor: colorTheme.darkest }]} />
+        <Text style={[styles.dragArrow, { color: colorTheme.darkest }]}>⌄</Text>
       </View>
       <ScrollView 
         showsVerticalScrollIndicator={false} 

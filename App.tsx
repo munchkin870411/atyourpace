@@ -78,7 +78,7 @@ export default function App(): React.JSX.Element {
 
       <ScrollView 
         style={styles.content}
-        contentContainerStyle={{ paddingBottom: isExpanded ? 500 : 150 }}
+        contentContainerStyle={{ paddingBottom: isExpanded ? 500 : 120 }}
       >
         <TodaySection
           activeTasks={activeTasks}
