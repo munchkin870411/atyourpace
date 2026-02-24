@@ -11,6 +11,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Task } from '../types';
 import { modalStyles as styles } from '../styles/modalStyles';
 import { ColorTheme, addAlpha } from '../utils/colorUtils';
+import { isFirstTodayTask } from '../utils/taskHelpers';
 
 interface AddTaskModalProps {
   visible: boolean;
@@ -73,6 +74,8 @@ export default function AddTaskModal({
   const uniqueTaskTemplates = Array.from(new Set(existingTasks.filter(t => t.isSavedTemplate).map((t) => t.text)))
     .map((text) => existingTasks.find((t) => t.text === text && t.isSavedTemplate)!)
     .filter((t) => t !== undefined && t.text !== 'Add your first task!');
+
+  const isEditingFirstTodayTask = editingTask ? isFirstTodayTask(editingTask, existingTasks) : false;
 
   const selectExistingTask = (task: Task) => {
     setTaskText(task.text);
@@ -229,9 +232,8 @@ export default function AddTaskModal({
               ))}
             </View>
 
-            {(isFirstTask || (editingTask && editingTask.section === 'today')) && (
+            {(isFirstTask || isEditingFirstTodayTask) && (
               <>
-                <Text style={[styles.inputLabel, { color: colorTheme.textColor }]}>Pick a starting time?</Text>
                 <View style={styles.startTimeContainer}>
                   <TextInput
                     style={[styles.input, styles.inputSmall, { backgroundColor: colorTheme.lightest, color: colorTheme.textColor }]}

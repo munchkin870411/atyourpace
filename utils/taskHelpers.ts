@@ -45,6 +45,11 @@ const determineStartTimeForReorder = (dayStartTime: string): string => {
   return nowMinutes >= startMinutes ? currentTime : dayStartTime;
 };
 
+export const isFirstTodayTask = (task: Task, allTasks: Task[]): boolean => {
+  const todayTasks = allTasks.filter(t => t.section === 'today' && !t.completed && !t.isSavedTemplate);
+  return todayTasks.length > 0 && todayTasks[0].id === task.id;
+};
+
 export const toggleTask = (
   tasks: Task[],
   id: number
