@@ -35,7 +35,7 @@ export default function App(): React.JSX.Element {
     saveTasks
   } = useTaskStorage();
 
-  const { translateY, slideAnim, panResponder } = usePanResponder(isExpanded, setIsExpanded);
+  const { translateY, slideAnim, panResponder, toggleExpand } = usePanResponder(isExpanded, setIsExpanded);
 
   const {
     activeTasks,
@@ -113,6 +113,7 @@ export default function App(): React.JSX.Element {
         translateY={translateY}
         slideAnim={slideAnim}
         panResponder={panResponder}
+        onToggleExpand={toggleExpand}
         thisWeekTasks={thisWeekTasks}
         otherTasks={otherTasks}
         onToggle={toggleTaskHandler}

@@ -11,6 +11,7 @@ interface BottomSheetProps {
   translateY: Animated.Value;
   slideAnim: Animated.Value;
   panResponder: ReturnType<typeof PanResponder.create>;
+  onToggleExpand: () => void;
   thisWeekTasks: Task[];
   otherTasks: Task[];
   onToggle: (id: number) => void;
@@ -30,6 +31,7 @@ export default function BottomSheet({
   translateY,
   slideAnim,
   panResponder,
+  onToggleExpand,
   thisWeekTasks,
   otherTasks,
   onToggle,
@@ -57,7 +59,9 @@ export default function BottomSheet({
         <View style={styles.lightSection} />
         <View style={[styles.topLine, { backgroundColor: colorTheme.darkest }]} />
         <View style={[styles.secondLine, { backgroundColor: colorTheme.darkest }]} />
-        <Text style={[styles.dragArrow, { color: colorTheme.darkest }]}>⌃</Text>
+        <TouchableOpacity onPress={onToggleExpand}>
+          <Text style={[styles.dragArrow, { color: colorTheme.darkest }]}>⌃</Text>
+        </TouchableOpacity>
         <View style={[styles.bottomLine, { backgroundColor: colorTheme.darkest }]} />
       </View>
     );
@@ -80,7 +84,9 @@ export default function BottomSheet({
       <View {...panResponder.panHandlers} style={styles.bottomSheetHandle}>
         <View style={[styles.topLine, { backgroundColor: colorTheme.darkest }]} />
         <View style={[styles.secondLine, { backgroundColor: colorTheme.darkest }]} />
-        <Text style={[styles.dragArrow, { color: colorTheme.darkest }]}>⌄</Text>
+        <TouchableOpacity onPress={onToggleExpand}>
+          <Text style={[styles.dragArrow, { color: colorTheme.darkest }]}>⌄</Text>
+        </TouchableOpacity>
       </View>
       <ScrollView 
         showsVerticalScrollIndicator={false} 

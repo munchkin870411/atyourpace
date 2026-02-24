@@ -60,5 +60,38 @@ export const usePanResponder = (
     })
   ).current;
 
-  return { translateY, slideAnim, panResponder };
+  const toggleExpand = () => {
+    if (isExpanded) {
+      // Collapse
+      Animated.parallel([
+        Animated.timing(translateY, {
+          toValue: 0,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+        Animated.timing(slideAnim, {
+          toValue: 500,
+          duration: 300,
+          useNativeDriver: true,
+        })
+      ]).start(() => setIsExpanded(false));
+    } else {
+      // Expand
+      setIsExpanded(true);
+      Animated.parallel([
+        Animated.timing(translateY, {
+          toValue: 0,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+        Animated.timing(slideAnim, {
+          toValue: 0,
+          duration: 300,
+          useNativeDriver: true,
+        })
+      ]).start();
+    }
+  };
+
+  return { translateY, slideAnim, panResponder, toggleExpand };
 };
